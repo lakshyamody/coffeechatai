@@ -1,4 +1,6 @@
 import { Eyebrow } from "@/components/brand";
+import { ROUND_SCHEDULE, closesAt } from "@/lib/schedule";
+import { SCORE_TERMS } from "@/lib/scoring";
 import {
   Accordion,
   AccordionContent,
@@ -9,15 +11,15 @@ import {
 const QUESTIONS = [
   {
     q: "How does the pairing actually work?",
-    a: "Tuesday at midnight everyone who's opted in goes into one pool. We score every viable pair on five things — whether you each have what the other asked for, how much context you share, whether the seniority gap is the one you wanted, whether your calendars overlap, and whether you're different enough to learn something. Then we solve for the arrangement that's best across the whole round, not just best for whoever signed up first.",
+    a: `${ROUND_SCHEDULE.closesDay} at midnight everyone who's opted in goes into one pool. We score every viable pair on ${SCORE_TERMS.length} things — whether you each have what the other asked for, how much context you share, whether the seniority gap is the one you wanted, whether your calendars overlap, whether your values and personalities fit, and whether you're different enough to learn something. Then we solve for the arrangement that's best across the whole round, not just best for whoever signed up first.`,
   },
   {
     q: "How do I sign in?",
-    a: "With your email and a six-digit code — there's no password. Everything else runs through that address too: the confirmation when you join, your match every Wednesday, and the note asking how it went. Use an inbox you actually read.",
+    a: `With your email and a six-digit code. Everything else runs through that address too: the confirmation when you join, your match every ${ROUND_SCHEDULE.sendsDay}, and the note asking how it went. Use an inbox you actually read. You can also set a password afterwards so signing back in doesn't need the inbox at all.`,
   },
   {
     q: "Do you give out my email address?",
-    a: "To exactly one person a week: the person you're matched with, who gets it at the same moment you get theirs. Nobody else can see it, there's no directory, and there's no way to browse for you. If you'd rather not be reachable that week, opt out before Tuesday.",
+    a: `To exactly one person a week: the person you're matched with, who gets it at the same moment you get theirs. Nobody else can see it, there's no directory, and there's no way to browse for you. If you'd rather not be reachable that week, opt out before ${ROUND_SCHEDULE.closesDay}.`,
   },
   {
     q: "What does the AI actually do?",
@@ -41,7 +43,7 @@ const QUESTIONS = [
   },
   {
     q: "Can I skip a week?",
-    a: "Yes. Opt out any time before Tuesday 11:59pm and you're simply not in that round. No streak to break, no penalty, and you're back the moment you opt in again.",
+    a: `Yes. Opt out any time before ${closesAt} and you're simply not in that round. No streak to break, no penalty, and you're back the moment you opt in again.`,
   },
   {
     q: "What if I don't want to meet someone again?",

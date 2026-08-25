@@ -8,6 +8,7 @@ import { Marquee } from "@/components/site/marquee";
 import { Button } from "@/components/ui/button";
 import { MARQUEE_ORGS } from "@/lib/orgs";
 import { Input } from "@/components/ui/input";
+import { ROUND_SCHEDULE, closesAt, sendsAt } from "@/lib/schedule";
 
 const ORGS = MARQUEE_ORGS;
 
@@ -34,14 +35,14 @@ export function Hero({ members }: { members: number }) {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-matcha" />
           </span>
           <span className="text-sm font-semibold text-bark">
-            This week&apos;s round closes Tuesday, 11:59pm
+            This week&apos;s round closes {closesAt}
           </span>
         </div>
 
         <h1 className="font-display text-6xl leading-[0.92] tracking-tight text-ink sm:text-7xl md:text-8xl">
           One coffee chat.
           <br />
-          Every Wednesday.
+          Every {ROUND_SCHEDULE.sendsDay}.
         </h1>
 
         <div className="mx-auto mt-4 max-w-md">
@@ -49,7 +50,7 @@ export function Hero({ members }: { members: number }) {
         </div>
 
         <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-bark">
-          Tell us who you&apos;d like to meet. Wednesday at 7pm we send you{" "}
+          Tell us who you&apos;d like to meet. {sendsAt} we send you{" "}
           <strong className="font-semibold text-ink">one person</strong> worth
           talking to, why you two, and a time you&apos;re both free.
         </p>

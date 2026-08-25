@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { ROUND_SCHEDULE, sendsAt } from "./schedule";
 import { T, exec, query } from "./db";
 
 /**
@@ -175,7 +176,7 @@ export function welcomeEmail(opts: { name: string; roundNumber: number; summary:
       ) +
         `<div style="margin:14px 0;padding:14px;background:${CREAM};border-radius:12px;font-size:15px;line-height:1.6;font-style:italic">${opts.summary}</div>` +
         p(
-          "The round is solved Tuesday at midnight. Wednesday at 7pm you'll get one person, why the two of you, and their email so you can set it up directly.",
+          `The round is solved ${ROUND_SCHEDULE.closesDay} at midnight. ${sendsAt} you'll get one person, why the two of you, and their email so you can set it up directly.`,
         ) +
         p(
           `<span style="color:${OLIVE};font-size:13px">Not right? Update your answers any time and we'll re-read you before the next round.</span>`,

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CoffeeCup } from "@/components/brand";
 import { Button } from "@/components/ui/button";
+import { ROUND_SCHEDULE } from "@/lib/schedule";
 
 export function CtaBand() {
   return (
@@ -9,10 +10,10 @@ export function CtaBand() {
       <div className="mx-auto max-w-3xl px-5 text-center">
         <CoffeeCup className="mx-auto h-16 w-16 animate-float" />
         <h2 className="mt-6 font-display text-5xl leading-none sm:text-6xl">
-          This round closes Tuesday
+          This round closes {ROUND_SCHEDULE.closesDay}
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-paper/85">
-          Six minutes now, one conversation Wednesday. Opt out any week you
+          Six minutes now, one conversation {ROUND_SCHEDULE.sendsDay}. Opt out any week you
           don&apos;t feel like it.
         </p>
         <Button

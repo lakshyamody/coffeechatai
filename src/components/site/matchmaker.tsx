@@ -1,5 +1,12 @@
 import { ArrowLeftRight, Repeat, ScanLine, Sigma } from "lucide-react";
 import { Eyebrow } from "@/components/brand";
+import { providerLabel } from "@/lib/extractor";
+import { WEIGHTS } from "@/lib/scoring";
+
+// Read from the same constants the matcher uses. These footnotes used to be
+// hand-written, and the provider one had already drifted — the page claimed
+// Claude while Gemini was doing the work.
+const RECIPROCITY_PCT = Math.round(WEIGHTS.reciprocity * 100);
 
 const PILLARS = [
   {
@@ -7,14 +14,14 @@ const PILLARS = [
     title: "We read you, not your checkboxes",
     body:
       "You write a few sentences in your own words. A language model turns that into a structured profile — your values, how you like to talk, what a good outcome looks like, what you won't tolerate — and the matcher reasons over that instead of keywords. You see exactly what it extracted, and you can correct it.",
-    footnote: "Claude Opus 5 · falls back to rules if the call fails",
+    footnote: `${providerLabel()} · falls back to rules if the call fails`,
   },
   {
     icon: ArrowLeftRight,
     title: "It scores both directions",
     body:
-      "A chat where one person gets everything and the other gets nothing is a bad chat, however well it reads on paper. Your offers are matched against their asks and theirs against yours, then combined with a harmonic mean — a blend dominated by whichever side is getting less.",
-    footnote: "30% of the score, the largest single term",
+      "A chat where one person gets everything and the other gets nothing is a bad chat, however well it reads on paper. Your offers are matched against their asks and theirs against yours, then blended so a balanced pair beats a one-sided one — without dismissing a genuine one-way fit, which is what a student asking an engineer about their path actually is.",
+    footnote: `${RECIPROCITY_PCT}% of the score, the largest single term`,
   },
   {
     icon: Sigma,

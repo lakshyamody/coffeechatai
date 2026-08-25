@@ -3,6 +3,7 @@ import { Rubik, Jersey_25, Caveat } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { SetupNeeded } from "@/components/setup-needed";
 import { storageHealthy } from "@/lib/db";
+import { ROUND_SCHEDULE } from "@/lib/schedule";
 import "./globals.css";
 
 const rubik = Rubik({
@@ -25,8 +26,7 @@ const caveat = Caveat({
 
 export const metadata: Metadata = {
   title: "Brewed | Your coffee chat matchmaker",
-  description:
-    "Brewed matches you with one person worth talking to every week. No cold DMs, no networking events, no swiping. One intro, one conversation, every Wednesday.",
+  description: `Brewed matches you with one person worth talking to every week. No cold DMs, no networking events, no swiping. One intro, one conversation, every ${ROUND_SCHEDULE.sendsDay}.`,
 };
 
 export const dynamic = "force-dynamic";

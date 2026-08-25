@@ -31,6 +31,7 @@ import {
   TOPIC_TAGS,
 } from "@/lib/taxonomy";
 import { cn } from "@/lib/utils";
+import { sendsAt } from "@/lib/schedule";
 
 interface Draft {
   name: string;
@@ -427,8 +428,7 @@ export function JoinFlow({
           You&apos;re in round {roundNumber}
         </h1>
         <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-bark">
-          Check your inbox — we&apos;ve emailed you a confirmation. Wednesday at
-          7pm you&apos;ll get one person, why the two of you, and their email.
+          Check your inbox — we&apos;ve emailed you a confirmation. {sendsAt} you&apos;ll get one person, why the two of you, and their email.
         </p>
 
         {extracted && (

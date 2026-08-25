@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Archive, RefreshCw, Send } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { sendsAtShort } from "@/lib/schedule";
 
 export function RoundControls() {
   return (
@@ -45,7 +46,7 @@ export function NotifyButton() {
       className="sticker sticker-press h-11 rounded-lg bg-roast px-5 font-display text-lg tracking-wide text-white hover:bg-roast"
     >
       <Send className={`mr-2 h-4 w-4 ${busy ? "animate-pulse" : ""}`} />
-      Send the Wednesday 7pm emails
+      Send the {sendsAtShort} emails
     </Button>
   );
 }

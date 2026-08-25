@@ -247,6 +247,22 @@ export function extractorAvailable(): boolean {
   return activeProvider() !== "heuristic";
 }
 
+/**
+ * What is actually running, for display. Read from the same place the
+ * extractor reads it, so the site can't claim one provider while another
+ * does the work.
+ */
+export function providerLabel(): string {
+  switch (activeProvider()) {
+    case "gemini":
+      return `Google ${GEMINI_MODEL}`;
+    case "claude":
+      return CLAUDE_MODEL === "claude-opus-5" ? "Claude Opus 5" : CLAUDE_MODEL;
+    default:
+      return "No model configured";
+  }
+}
+
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.7-flash";
 const CLAUDE_MODEL = process.env.CLAUDE_MODEL ?? "claude-opus-5";
 

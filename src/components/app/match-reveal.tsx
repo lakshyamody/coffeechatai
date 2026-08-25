@@ -22,6 +22,7 @@ import { listSlots, slotLabel } from "@/lib/availability";
 import { WEIGHTS } from "@/lib/scoring";
 import type { MatchReason, ScoreBreakdown } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { ROUND_SCHEDULE } from "@/lib/schedule";
 
 export interface RevealPerson {
   id: string;
@@ -91,7 +92,7 @@ export function MatchReveal({
   return (
     <div className="mx-auto max-w-3xl px-5 py-10">
       <div className="text-center">
-        <Eyebrow>Round {roundNumber} · Wednesday 7:00 PM</Eyebrow>
+        <Eyebrow>Round {roundNumber} · {ROUND_SCHEDULE.sendsDay} {ROUND_SCHEDULE.sendsTimeLong}</Eyebrow>
         <h1 className="mt-2 font-display text-5xl leading-none text-ink sm:text-6xl">
           Your coffee chat
         </h1>

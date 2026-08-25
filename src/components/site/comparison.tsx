@@ -1,6 +1,7 @@
 import { Check, X } from "lucide-react";
 import { Eyebrow } from "@/components/brand";
 import { PhoneMock } from "@/components/site/phone";
+import { ROUND_SCHEDULE } from "@/lib/schedule";
 
 const THEIRS = [
   "Hi! I came across your profile and was really impressed…",
@@ -35,7 +36,7 @@ export function Comparison() {
             <div className="mt-5 flex justify-center">
               <PhoneMock
                 bubbles={[
-                  { from: "them", text: "☕ Your Wednesday chat: Jonas Rao — Senior engineer @ Northbound." },
+                  { from: "them", text: `☕ Your ${ROUND_SCHEDULE.sendsDay} chat: Jonas Rao — Senior engineer @ Northbound.` },
                   { from: "them", text: "Why you two: you asked for help breaking into infra. He offered it, and he's two steps ahead of you." },
                   { from: "them", text: "You're both free Thu 2–5pm. Locked in?" },
                 ]}
