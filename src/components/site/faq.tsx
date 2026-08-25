@@ -18,12 +18,16 @@ const QUESTIONS = [
     a: `With your email and a six-digit code. Everything else runs through that address too: the confirmation when you join, your match every ${ROUND_LABELS.sendsDay}, and the note asking how it went. Use an inbox you actually read. You can also set a password afterwards so signing back in doesn't need the inbox at all.`,
   },
   {
+    q: "Why do I have to paste my LinkedIn instead of connecting it?",
+    a: "Because connecting it wouldn't help. LinkedIn's public API returns your name, photo and email — and nothing else. No headline, no employer, no history. Reading an actual profile requires their partner programme, which isn't self-serve. So pasting is the honest way to get the substance we match on, and it takes about ten seconds.",
+  },
+  {
     q: "Do you give out my email address?",
     a: `To exactly one person a week: the person you're matched with, who gets it at the same moment you get theirs. Nobody else can see it, there's no directory, and there's no way to browse for you. If you'd rather not be reachable that week, opt out before ${ROUND_LABELS.closesDay}.`,
   },
   {
     q: "What does the AI actually do?",
-    a: "It reads the few sentences you write in your own words and turns them into a structured profile — values, how you like to talk, what a good outcome looks like, what you won't put up with. That's what gets matched on. It doesn't pick your match: the pairing itself is a deterministic algorithm over scores you can see. And it never sees more of you than what you typed.",
+    a: "It reads what you pasted from LinkedIn and your answer about who you want to meet, and turns them into everything the matcher needs — what you can offer, what you're after, the subjects you know, how senior the other person should be, and what you won't put up with. That's what gets matched on. It doesn't pick your match: the pairing itself is a deterministic algorithm over scores you can see. And it never sees more of you than what you gave it.",
   },
   {
     q: "What's a hard no?",

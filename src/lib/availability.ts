@@ -43,3 +43,19 @@ export function listSlots(mask: number): number[] {
 export function maskFrom(pairs: Array<[number, number]>): number {
   return pairs.reduce((m, [d, b]) => m | (1 << slotIndex(d, b)), 0);
 }
+
+/**
+ * What we assume when someone hasn't told us yet.
+ *
+ * Signup asks one question; pinning down a calendar is not it. Weekday
+ * middays and afternoons is where coffee chats actually happen, and it's wide
+ * enough that a new member is matchable on day one. They can narrow it from
+ * the dashboard whenever they care to.
+ */
+export const DEFAULT_AVAILABILITY = maskFrom([
+  [0, 1], [0, 2],
+  [1, 1], [1, 2],
+  [2, 1], [2, 2],
+  [3, 1], [3, 2],
+  [4, 1], [4, 2],
+]);

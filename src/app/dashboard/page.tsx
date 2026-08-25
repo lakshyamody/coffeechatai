@@ -73,7 +73,7 @@ export default async function DashboardPage() {
             You&apos;re not in a round yet
           </h1>
           <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-bark">
-            Sign in with your email and answer six minutes of questions.
+            Sign in with your email, paste your LinkedIn, and answer one question.
             You&apos;ll be in the next round we solve.
           </p>
           <Button

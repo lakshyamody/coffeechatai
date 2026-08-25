@@ -1,40 +1,45 @@
-import { Check } from "lucide-react";
 import { Avatar } from "@/components/brand";
 import { BLOCKS, DAYS } from "@/lib/availability";
 
-/** Step 1 — what the questionnaire feels like. */
+/** Step 1 — what signup actually is now. */
 export function TagCloudPreview() {
-  const offers = ["Referrals at my company", "Deep technical review", "Managing people"];
-  const seeks = ["Help raising", "Someone in the same trenches"];
   return (
     <div className="sticker-lg w-full max-w-sm rounded-2xl p-5">
-      <p className="font-display text-lg tracking-wide text-ink">I can offer</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {offers.map((t) => (
-          <span
-            key={t}
-            className="inline-flex items-center gap-1.5 rounded-full border-2 border-ink bg-primary px-3 py-1 text-xs font-semibold text-ink"
-          >
-            <Check className="h-3 w-3" strokeWidth={3} />
-            {t}
-          </span>
-        ))}
+      <p className="font-display text-lg tracking-wide text-ink">Your LinkedIn</p>
+      <div className="mt-2 rounded-lg border-2 border-dashed border-sand bg-cream p-3 text-xs leading-relaxed text-olive">
+        Staff Engineer at Stripe · Bangalore
+        <br />
+        About: I work on payments reliability — mostly the ledger path and the
+        things that go wrong at p99…
       </div>
-      <p className="mt-5 font-display text-lg tracking-wide text-ink">I&apos;m looking for</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {seeks.map((t) => (
-          <span
-            key={t}
-            className="inline-flex items-center gap-1.5 rounded-full border-2 border-ink bg-roast px-3 py-1 text-xs font-semibold text-white"
-          >
-            <Check className="h-3 w-3" strokeWidth={3} />
-            {t}
-          </span>
-        ))}
+
+      <p className="mt-5 font-display text-lg tracking-wide text-ink">
+        Who do you want to meet?
+      </p>
+      <div className="mt-2 rounded-lg border-2 border-ink bg-primary/25 p-3 text-xs leading-relaxed text-bark">
+        Founders a couple of years ahead of me who&apos;ve scaled a marketplace
+        and will tell me bluntly where cold-start broke.
       </div>
-      <div className="mt-5 border-t-2 border-dashed border-sand pt-3 text-xs text-olive">
-        Both sides use the same list — that&apos;s what lets the matcher line
-        one person&apos;s offer up against another&apos;s ask.
+
+      <div className="mt-5 border-t-2 border-dashed border-sand pt-3">
+        <p className="text-[0.65rem] font-bold uppercase tracking-wider text-olive">
+          What the matcher gets
+        </p>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
+          {["craft", "marketplaces", "fintech", "wants: senior", "no recruiters"].map(
+            (t) => (
+              <span
+                key={t}
+                className="rounded-full border-2 border-ink bg-white px-2 py-0.5 text-[0.65rem] font-semibold text-bark"
+              >
+                {t}
+              </span>
+            ),
+          )}
+        </div>
+        <p className="mt-2 text-xs leading-snug text-olive">
+          Derived, not ticked. You see it before you finish.
+        </p>
       </div>
     </div>
   );

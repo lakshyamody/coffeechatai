@@ -1,8 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import type { DealBreaker, Direction, Format, Profile, Seniority } from "@/lib/types";
-import { DEAL_BREAKERS } from "@/lib/types";
+import type { Direction, Format, Profile, Seniority } from "@/lib/types";
 import {
   allProfiles,
   getProfile,
@@ -13,9 +12,10 @@ import {
   upsertProfile,
 } from "@/lib/store";
 import { rankAgainstPool } from "@/lib/matching";
-import { popcount } from "@/lib/availability";
+import { DEFAULT_AVAILABILITY, popcount } from "@/lib/availability";
 import { extractProfile } from "@/lib/extractor";
 import { sendEmail, welcomeEmail } from "@/lib/email";
+import { cityByName } from "@/lib/cities";
 import {
   SESSION_COOKIE,
   SESSION_COOKIE_OPTIONS,
@@ -25,46 +25,27 @@ import {
 } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 interface Draft {
-  name?: string;
-  role?: string;
-  company?: string;
-  city?: string;
-  utcOffset?: number;
-  seniority?: number;
-  direction?: string;
-  format?: string;
-  goals?: string[];
-  offers?: string[];
-  seeks?: string[];
-  topics?: string[];
-  dealBreakers?: string[];
-  concreteness?: number;
-  talkativeness?: number;
+  linkedinUrl?: string;
+  linkedinText?: string;
+  wantToMeet?: string;
+  /** Optional refinements; sensible defaults are used when absent. */
   availability?: number;
-  workingOn?: string;
-  greatChat?: string;
-  avoid?: string;
+  format?: string;
+  city?: string;
 }
 
-const DIRECTIONS: Direction[] = ["senior", "peer", "junior", "any"];
 const FORMATS: Format[] = ["virtual", "in-person", "either"];
-const DEAL_BREAKER_IDS = DEAL_BREAKERS.map((d) => d.id);
 
-const clamp01 = (n: unknown, fallback = 0.5) =>
-  Math.min(1, Math.max(0, typeof n === "number" && Number.isFinite(n) ? n : fallback));
-
-const strings = (v: unknown): string[] =>
-  Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
-
-const text = (v: unknown, max = 1200) =>
+const text = (v: unknown, max = 6000) =>
   typeof v === "string" ? v.trim().slice(0, max) : "";
 
 export async function POST(request: Request) {
   // The email is never taken from the request body — only from a proven
-  // session or a code the user just verified. Otherwise anyone could enrol
-  // under someone else's address and receive their matches.
+  // session or a code just verified. Otherwise anyone could enrol under
+  // someone else's address and receive their matches.
   const jar = await cookies();
   const sessionId = readSession(jar.get(SESSION_COOKIE)?.value);
   const pendingEmail = jar.get("brewed_pending_email")?.value;
@@ -85,35 +66,46 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Malformed request body." }, { status: 400 });
   }
 
-  const name = (draft.name ?? "").trim();
-  const availability = Number.isInteger(draft.availability) ? draft.availability! : 0;
+  const wantToMeet = text(draft.wantToMeet, 1000);
+  const linkedinText = text(draft.linkedinText);
+  const linkedinUrl = text(draft.linkedinUrl, 300);
 
-  const problems: string[] = [];
-  if (name.length < 2) problems.push("Tell us your name.");
-  if (strings(draft.offers).length === 0) problems.push("Pick at least one thing you can offer.");
-  if (strings(draft.seeks).length === 0) problems.push("Pick at least one thing you're after.");
-  if (popcount(availability) < 3) {
-    problems.push("Mark at least 3 blocks you're free — fewer and we can't find a time.");
+  if (wantToMeet.length < 10) {
+    return NextResponse.json(
+      { error: "Tell us who you'd like to meet — a sentence is plenty." },
+      { status: 422 },
+    );
   }
-  if (problems.length) {
-    return NextResponse.json({ error: problems[0], problems }, { status: 422 });
+  if (linkedinText.length < 20 && !linkedinUrl) {
+    return NextResponse.json(
+      { error: "Paste something from your LinkedIn so we know who you are." },
+      { status: 422 },
+    );
   }
 
-  const seniority = Math.min(4, Math.max(0, Math.round(draft.seniority ?? 1))) as Seniority;
-  const direction = DIRECTIONS.includes(draft.direction as Direction)
-    ? (draft.direction as Direction)
-    : "any";
+  // One model call replaces the nine screens this used to be: it reads the
+  // LinkedIn text and the answer, and produces the tags, seniority and
+  // structured profile the matcher scores on.
+  const { fields, structured, source } = await extractProfile({
+    linkedinText,
+    linkedinUrl,
+    wantToMeet,
+    email,
+  });
+
+  const existing = sessionProfile ?? (await getProfileByEmail(email));
+  const city = text(draft.city, 80) || fields.city || existing?.city || "Remote";
+  const availability =
+    Number.isInteger(draft.availability) && popcount(draft.availability!) >= 3
+      ? draft.availability!
+      : (existing?.availability ?? DEFAULT_AVAILABILITY);
   const format = FORMATS.includes(draft.format as Format)
     ? (draft.format as Format)
-    : "either";
-  const role = (draft.role ?? "").trim() || "Curious human";
-  const company = (draft.company ?? "").trim() || "Independent";
-  const city = (draft.city ?? "").trim() || "Remote";
-  const declaredDealBreakers = strings(draft.dealBreakers).filter(
-    (d): d is DealBreaker => (DEAL_BREAKER_IDS as string[]).includes(d),
-  );
+    : (existing?.format ?? "either");
 
-  const existing = sessionProfile ?? await getProfileByEmail(email);
+  const role = fields.role || "Curious human";
+  const company = fields.company || "Independent";
+  const name = fields.name || existing?.name || email.split("@")[0];
 
   const profile: Profile = {
     id: existing?.id ?? nextId(),
@@ -122,17 +114,17 @@ export async function POST(request: Request) {
     headline: `${role} @ ${company}`,
     role,
     company,
-    seniority,
+    seniority: Math.min(4, Math.max(0, Math.round(fields.seniority))) as Seniority,
     city,
-    utcOffset: typeof draft.utcOffset === "number" ? draft.utcOffset : 0,
+    utcOffset: cityByName(city)?.offset ?? existing?.utcOffset ?? 0,
     format,
-    goals: strings(draft.goals),
-    offers: strings(draft.offers),
-    seeks: strings(draft.seeks),
-    topics: strings(draft.topics),
-    direction,
-    concreteness: clamp01(draft.concreteness),
-    talkativeness: clamp01(draft.talkativeness),
+    goals: fields.goals,
+    offers: fields.offers,
+    seeks: fields.seeks,
+    topics: fields.topics,
+    direction: fields.direction as Direction,
+    concreteness: fields.concreteness,
+    talkativeness: fields.talkativeness,
     availability,
     history: existing?.history ?? [],
     blocked: existing?.blocked ?? [],
@@ -142,30 +134,9 @@ export async function POST(request: Request) {
     signals: existing?.signals ?? [],
     preferences: existing?.preferences,
     emailVerified: true,
+    structured,
+    linkedinUrl: linkedinUrl || existing?.linkedinUrl,
   };
-
-  // The extractor turns the raw answers into the structured representation
-  // everything downstream actually reasons over.
-  profile.structured = await extractProfile({
-    name,
-    role,
-    company,
-    city,
-    seniority,
-    goals: profile.goals,
-    offers: profile.offers,
-    seeks: profile.seeks,
-    topics: profile.topics,
-    direction,
-    format,
-    concreteness: profile.concreteness,
-    talkativeness: profile.talkativeness,
-    declaredDealBreakers,
-    workingOn: text(draft.workingOn),
-    greatChat: text(draft.greatChat),
-    avoid: text(draft.avoid),
-    signals: profile.signals,
-  });
 
   await upsertProfile(profile);
   invalidateRound();
@@ -175,7 +146,7 @@ export async function POST(request: Request) {
     ...welcomeEmail({
       name: profile.name,
       roundNumber: await getRoundNumber(),
-      summary: profile.structured.summary,
+      summary: structured.summary,
     }),
   });
 
@@ -190,7 +161,16 @@ export async function POST(request: Request) {
   const response = NextResponse.json({
     id: profile.id,
     preview,
-    structured: profile.structured,
+    structured,
+    source,
+    derived: {
+      headline: profile.headline,
+      city: profile.city,
+      offers: profile.offers,
+      seeks: profile.seeks,
+      topics: profile.topics,
+      direction: profile.direction,
+    },
   });
   response.cookies.set(SESSION_COOKIE, issueSession(profile.id), SESSION_COOKIE_OPTIONS);
   response.cookies.set("brewed_pending_email", "", { path: "/", maxAge: 0 });

@@ -1,5 +1,10 @@
 /**
- * The controlled vocabulary behind the questionnaire.
+ * The controlled vocabulary the matcher scores on.
+ *
+ * Members never see these as checkboxes any more — the extractor maps their
+ * LinkedIn text and their one answer onto these ids. They stay a closed set
+ * because the scoring needs "what A offers" and "what B seeks" expressed in
+ * the same units to intersect at all.
  *
  * `offers` and `seeks` share one tag space on purpose: the matcher's core
  * signal is "what A can give ∩ what B wants", so both sides must be
@@ -9,9 +14,9 @@
 export interface Tag {
   id: string;
   label: string;
-  /** Shown on the offer side of the questionnaire. */
+  /** Phrasing used when this is something a member can give. */
   offerLabel?: string;
-  /** Shown on the seek side of the questionnaire. */
+  /** Phrasing used when this is something a member wants. */
   seekLabel?: string;
   emoji: string;
 }

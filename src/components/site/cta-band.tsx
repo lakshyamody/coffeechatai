@@ -13,7 +13,7 @@ export function CtaBand() {
           This round closes {ROUND_LABELS.closesDay}
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-paper/85">
-          Six minutes now, one conversation {ROUND_LABELS.sendsDay}. Opt out any week you
+          One paste, one question, one conversation {ROUND_LABELS.sendsDay}. Opt out any week you
           don&apos;t feel like it.
         </p>
         <Button

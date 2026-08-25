@@ -13,7 +13,7 @@ const PILLARS = [
     icon: ScanLine,
     title: "We read you, not your checkboxes",
     body:
-      "You write a few sentences in your own words. A language model turns that into a structured profile — your values, how you like to talk, what a good outcome looks like, what you won't tolerate — and the matcher reasons over that instead of keywords. You see exactly what it extracted, and you can correct it.",
+      "You paste your LinkedIn and answer one question: who do you want to meet. A model turns that into everything the matcher needs — what you can offer, what you're after, the subjects you know, how far ahead the other person should be, and what you won't tolerate. Nobody ticks any of that themselves. You see exactly what was extracted, and you can correct it.",
     footnote: `${providerLabel()} · falls back to rules if the call fails`,
   },
   {

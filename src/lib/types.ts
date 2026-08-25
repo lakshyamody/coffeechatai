@@ -1,8 +1,8 @@
 /**
  * Domain model for Brewed.
  *
- * A member fills in a short questionnaire once. Every round (weekly) the
- * matcher takes everyone who is opted in and produces a set of 1:1 pairings.
+ * A member pastes their LinkedIn and answers one question once. Every round
+ * (weekly) the matcher takes everyone opted in and produces 1:1 pairings.
  */
 
 export type Seniority = 0 | 1 | 2 | 3 | 4;
@@ -58,6 +58,8 @@ export interface Profile {
   preferences?: PreferenceModel;
   /** Email ownership proven via a one-time code. */
   emailVerified: boolean;
+  /** Their LinkedIn, kept so a match can look them up before meeting. */
+  linkedinUrl?: string;
   /**
    * Optional. `scrypt$salt$hash` once set. Email codes keep working either
    * way — a password only saves the trip to your inbox.
@@ -67,8 +69,8 @@ export interface Profile {
 
 /* ------------------------------------------------------------------------
    Structured User Representation
-   Produced by the profile extractor from the questionnaire plus whatever
-   the member wrote in their own words. This is what the matcher reasons
+   Produced by the profile extractor from the member's LinkedIn text and
+   their answer to the one question. This is what the matcher reasons
    over — the raw answers are only ever an input to it.
    ------------------------------------------------------------------------ */
 

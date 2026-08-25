@@ -6,9 +6,9 @@ import { ROUND_LABELS, sendsAtShort } from "@/lib/schedule";
 const STEPS = [
   {
     n: "01",
-    title: "Tell us who you want to meet",
+    title: "Paste your LinkedIn, answer one question",
     body:
-      "Six minutes, once. What you can offer, what you're after, a few sentences in your own words, and the blocks you're actually free. No profile photo, no bio to agonise over.",
+      "That's the whole signup. Whatever you can copy from your profile, and one question — what kind of people do you want to meet. No questionnaire, no tick-boxes, no bio to agonise over.",
     art: <TagCloudPreview />,
   },
   {
