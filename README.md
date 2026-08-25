@@ -1,36 +1,250 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Brewed ☕
 
-## Getting Started
+A coffee-chat matchmaker — the ditto.ai product model and visual language, rebuilt for
+professional networking instead of dating. Tell it who you'd like to meet; every
+Wednesday it pairs you with one person worth talking to and tells you why.
 
-First, run the development server:
+Next.js 16 · React 19 · Tailwind v4 · shadcn/ui
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Pages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | What it is |
+| --- | --- |
+| `/` | Landing page — hero, four-step explainer, proof, matchmaker, comparison, safety, FAQ |
+| `/join` | Seven-step onboarding questionnaire, ends with a live preview of your closest matches |
+| `/dashboard` | Your match: the poster, why you two, the full score breakdown, a scheduler, conversation starters |
+| `/lab` | The round internals — strategy, stats, every pairing, and who was held over |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+No account needed to look around: `/dashboard` offers a set of pool members to view as.
 
-## Learn More
+## The pipeline
 
-To learn more about Next.js, take a look at the following resources:
+```
+   Questionnaire ──┐
+                   ├──► LLM Profile Extractor ──► Structured User Representation
+  Behavioural data ─┘        (Claude Opus 5)        values · personality · lifestyle
+   (ratings, tags,                                  interests · connection goals
+    no-shows)                                       deal-breakers · preferences
+                                                              │
+                                                              ▼
+                                              Candidate Generation  (hard filters)
+                                                              │
+                                                              ▼
+                                              Compatibility Scoring (6 terms)
+                                                              │
+                                                              ▼
+                                              Global Matching Layer
+                                              Irving's stable roommates,
+                                              else greedy + repair + 2-opt
+                                                              │
+                                                              ▼
+                                              Match emails ──► they meet
+                                                              │
+                                                              ▼
+                                                          Feedback
+                                                              │
+                                                              ▼
+                                              Preference Model UPDATE ──┐
+                                                                        │
+                                              ◄─────────────────────────┘
+                                                   next round
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Extraction
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Members answer a questionnaire *and* write a few sentences in their own words.
+`src/lib/extractor.ts` sends both to a model with a schema-constrained
+structured output, producing values, a four-trait personality estimate,
+lifestyle, interests, connection goals, deal-breakers, and preferences.
 
-## Deploy on Vercel
+Two providers are supported and one zod schema drives both — Gemini consumes
+the JSON Schema derived from it, Claude consumes it through `zodOutputFormat`,
+and either response is parsed back through zod before it's trusted.
+`GEMINI_API_KEY` takes priority; `ANTHROPIC_API_KEY` is used otherwise.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+With neither key — or on an API error, a refusal, a quota rejection, or a
+schema failure — it falls back to a deterministic rules-based extractor and
+says which engine ran, in the UI and on the profile. **A signup never fails
+because a model call did.**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 2. Candidate generation
+
+Cheap structural filters before anything expensive: identity, blocks, prior
+matches, deal-breakers, whether they can physically meet, and whether their
+calendars intersect at all. Roughly a third of pairs die here.
+
+### 3. Compatibility scoring
+
+| Term | Weight | What it measures |
+| --- | --- | --- |
+| Reciprocity | 30% | `offers(A) ∩ seeks(B)` and the reverse, via a softened **harmonic mean** so a lopsided pairing can't score well on one side alone |
+| Resonance | 20% | **IDF-weighted cosine** over topics and goals — "quantum" counts far more than "LLM products" |
+| Complementarity | 14% | Seniority gap vs. what each side asked for, plus talker/listener balance |
+| Logistics | 14% | Popcount of two 28-bit availability masks, timezone decay, format feasibility |
+| Character | 14% | Values overlap and personality fit, from the structured representation |
+| Serendipity | 8% | `4j(1−j)` over topic Jaccard — peaks at 50% overlap |
+
+**Deal-breakers are hard.** They delete the edge rather than lowering it, so
+no amount of compatibility elsewhere can route around them.
+
+### 4. Global matching
+
+Everyone sits in one pool, so this is **stable roommates** — not swiping, and
+not the bipartite matching a dating app uses. **Irving's algorithm** (1985)
+finds a matching where no two people would both rather have had each other.
+Stable roommates instances often have no solution; when that happens the round
+falls back to greedy max-weight, then two repair passes and **2-opt** local
+search. The fallback never runs over a successful stable matching.
+
+Each person's preference list is ranked by *their own* learned weights — which
+is exactly the input stable roommates was designed to consume. The score shown
+in the UI stays symmetric and population-weighted, so both people see the same
+number.
+
+### 5. Feedback → preference model
+
+Ratings are labelled examples: we already know why the matcher paired you.
+`src/lib/preferences.ts` applies a **multiplicative-weights (Hedge /
+exponentiated gradient)** update, crediting terms by how much they *stood out*
+in that pairing rather than their raw level. Weights are normalised and
+clamped so no term collapses or dominates, and blended toward the population
+default until there's enough evidence to trust them (full trust at 8 ratings).
+
+In practice: six 5-star ratings on high-character pairings move that member's
+character weight from 0.14 to 0.38, with everything else shrinking to match.
+
+## Auth and email
+
+Sign-in is an emailed six-digit code. Codes are stored hashed, expire in 10
+minutes, and burn after 5 wrong guesses. Sessions are stateless HMAC tokens,
+so a restart doesn't sign everyone out mid-round.
+
+A password is optional on top of that: set one and you can sign straight in
+next time instead of waiting on an email. Hashed with scrypt and a per-password
+salt. New members are offered it at the end of onboarding rather than at
+sign-in, because until enrolment finishes there is no account to attach it to.
+A failed sign-in gives one generic message whether the account doesn't exist,
+has no password, or the password is wrong — anything more specific tells a
+stranger which emails are registered.
+
+**Email delivery is a hard dependency for the code path.** If the provider
+rejects the send — the usual cause being an unverified sending domain, which
+restricts delivery to the provider account's own address — the API returns 502
+and the UI says so, instead of showing a code box for a code that will never
+arrive.
+
+Email addresses are never read from a request body — only from a proven
+session or a code just verified — so nobody can enrol under someone else's
+address and receive their matches.
+
+Four emails: the verification code, a welcome note carrying the extracted
+summary, the Wednesday match (with **the other person's address**, so the two
+of them can arrange it directly), and a feedback request.
+
+With no `RESEND_API_KEY`, every message is captured at **`/outbox`** and
+rendered there instead of being delivered — which is what makes the whole
+email flow demoable with no credentials.
+
+## Layout
+
+```
+src/lib/   types · taxonomy · orgs · cities · scoring · irving · matching
+           extractor · preferences · auth · session · email · seed · store
+src/components/site/   landing page sections
+src/components/app/    login, onboarding, match reveal, feedback, grids
+src/app/api/           auth/{request,verify,logout} · enroll · feedback
+                       me · round · round/{commit,notify}
+```
+
+Configuration is all optional — see `.env.example`. With nothing set the app
+runs end to end using the rules-based extractor and the captured outbox.
+
+## Deploying
+
+Live at **https://coffeechatai-phi.vercel.app**.
+
+Vercel's filesystem is read-only, so the SQLite driver can't run there — the
+app detects this and serves a setup page rather than a 500. Set `POSTGRES_URL`
+(or `DATABASE_URL`) to any Postgres and it comes up; tables are created on
+first boot and there is no migration step.
+
+### Notes from wiring this to Supabase
+
+Four things cost real time and are worth knowing up front:
+
+- **Use the pooler host, not the direct one.** `db.<ref>.supabase.co` publishes
+  only an AAAA record, and Vercel's functions have no IPv6 egress. The
+  reachable host is `aws-0-<region>.pooler.supabase.com:6543`, with the
+  username `postgres.<project-ref>`. Transaction pooling is why the driver
+  sets `prepare: false`.
+- **Percent-encode the password.** Supabase's template is
+  `postgresql://postgres:[YOUR-PASSWORD]@…`; a password containing `@` or `#`
+  breaks URL parsing unless encoded, and the `[ ]` from the template must go.
+- **The app owns a `brewed` schema.** A Supabase project is rarely empty and
+  `profiles` is a name their own templates use, so nothing here lives in
+  `public`.
+- **Size the pool for concurrent renders.** React renders the layout and page
+  at the same time, so a request routinely has two queries in flight. On a
+  single pooled connection those stall each other; `max: 3` with a short
+  `idle_timeout` fixes it without hoarding a free tier's connection budget.
+
+### Checking the Postgres path without a server
+
+The app runs SQLite locally and Postgres in production from one set of SQL
+statements, which is only safe if those statements are genuinely portable.
+
+```bash
+npm run check:pg
+```
+
+runs the real schema and every query the app issues against **Postgres 18
+compiled to WASM** (PGlite) — no container, no connection string. It reads the
+DDL straight out of `src/lib/db.ts` so the test can't drift from the code.
+
+## Storage
+
+Two dialects behind one interface, chosen by whether `POSTGRES_URL` /
+`DATABASE_URL` is set:
+
+- **Postgres** (production) via `postgres.js`.
+- **SQLite** (local) via `node:sqlite` — built into Node, so no native build
+  step and no service to run. Lives at `.data/brewed.db`, override with
+  `BREWED_DB_PATH`.
+
+Queries are written once with `?` placeholders and rewritten to `$n` for
+Postgres, so `store.ts` holds one set of statements rather than two. Both hold
+profiles, auth challenges, the email log, and closed rounds, and everything
+survives a restart.
+
+Profiles are stored as a JSON document keyed by id and email: the shape is read whole and
+written whole, so a document column is the honest fit rather than twenty columns nothing
+queries apart. Deploying somewhere with an ephemeral filesystem means pointing the driver
+at Postgres instead; nothing above `src/lib/store.ts` would change.
+
+## No seed data
+
+There is no demo pool and there are no invented figures. The pool is whoever has actually
+signed up, and every number on the landing page is counted from the database at request
+time — members, chats arranged, rounds run, mean rating. With an empty database the page
+says there is nothing to report rather than filling the space with something flattering.
+
+The mockups in the explainer sections are labelled `example`; the people in them are
+invented to show the format and are not presented as members.
+
+## Design
+
+Members come from the Ivy League, Stanford / MIT / Berkeley / CMU, NUS and NTU
+Singapore, the IITs, IISc Bangalore, IIIT Hyderabad and BITS Pilani, plus YC
+companies (founders carry their batch), Big Tech, and research labs. Each org
+is pinned to the metro it actually sits in.
+
+Ported from ditto.ai's tokens — cream `hsl(57 40% 90%)` paper, `--radius: .5rem`, and the
+hard-offset "sticker" surfaces — with the dating pink replaced by roasted coffee tones and
+the golden CTA kept. Ditto's commercial faces (Argent Pixel, Spencer) are substituted with
+Google Fonts equivalents: **Jersey 25** for display, **Rubik** for body, **Caveat** for
+script accents.
