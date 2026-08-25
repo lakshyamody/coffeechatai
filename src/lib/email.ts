@@ -5,15 +5,23 @@ import { T, exec, query } from "./db";
 /**
  * Email delivery.
  *
- * Two transports:
- *   resend  — used when RESEND_API_KEY is set.
- *   outbox  — the fallback. Captures the message in memory and logs it, so
- *             signup, verification, and match notifications are all fully
- *             exercisable with no credentials and no external calls.
+ * Three transports, first configured wins:
  *
- * The outbox is not a stub of a missing feature; it's what makes the flow
- * demonstrable. /outbox renders whatever it holds.
+ *   agentmail — sends from an AgentMail inbox on their own verified domain,
+ *               so mail reaches any recipient. Preferred.
+ *   resend    — works with no domain setup, but the shared sender only
+ *               delivers to the Resend account owner until you verify a
+ *               domain of your own. Fine for testing, useless for a real
+ *               pool.
+ *   outbox    — the fallback. Records the message and nothing leaves the
+ *               machine, so signup, verification, and match notifications
+ *               are all exercisable with no credentials at all.
+ *
+ * The outbox is not a stub of a missing feature; it is what makes the flow
+ * demonstrable. /outbox renders whatever it holds, whichever transport ran.
  */
+
+export type Transport = "agentmail" | "resend" | "outbox";
 
 export interface OutboundEmail {
   id: string;
@@ -22,7 +30,7 @@ export interface OutboundEmail {
   html: string;
   text: string;
   sentAt: string;
-  transport: "resend" | "outbox";
+  transport: Transport;
   error?: string;
 }
 
@@ -58,8 +66,29 @@ export async function clearOutbox(): Promise<void> {
   await exec(`DELETE FROM ${T}emails`);
 }
 
+const AGENTMAIL_INBOX =
+  process.env.AGENTMAIL_INBOX_ID ?? "agency-leads@agentmail.to";
+
+export function activeTransport(): Transport {
+  if (process.env.AGENTMAIL_API_KEY) return "agentmail";
+  if (process.env.RESEND_API_KEY) return "resend";
+  return "outbox";
+}
+
 export function emailConfigured(): boolean {
-  return Boolean(process.env.RESEND_API_KEY);
+  return activeTransport() !== "outbox";
+}
+
+/** Shown in the UI so it is never a guess which provider is carrying mail. */
+export function transportLabel(): string {
+  switch (activeTransport()) {
+    case "agentmail":
+      return `AgentMail (${AGENTMAIL_INBOX})`;
+    case "resend":
+      return `Resend (${FROM})`;
+    default:
+      return "Not configured — captured locally";
+  }
 }
 
 /**
@@ -69,12 +98,59 @@ export function emailConfigured(): boolean {
  */
 const FROM = process.env.BREWED_FROM ?? "Brewed <onboarding@resend.dev>";
 
+async function viaAgentMail(msg: {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+}): Promise<string | undefined> {
+  const response = await fetch(
+    `https://api.agentmail.to/v0/inboxes/${encodeURIComponent(AGENTMAIL_INBOX)}/messages/send`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.AGENTMAIL_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: [msg.to],
+        subject: msg.subject,
+        html: msg.html,
+        text: msg.text,
+      }),
+    },
+  );
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    return `AgentMail ${response.status}: ${detail.slice(0, 200)}`;
+  }
+  return undefined;
+}
+
+async function viaResend(msg: {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+}): Promise<string | undefined> {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: msg.to,
+    subject: msg.subject,
+    html: msg.html,
+    text: msg.text,
+  });
+  return error?.message;
+}
+
 export async function sendEmail(msg: {
   to: string;
   subject: string;
   html: string;
   text: string;
 }): Promise<OutboundEmail> {
+  const transport = activeTransport();
   const record: OutboundEmail = {
     id: `m_${Math.random().toString(36).slice(2, 10)}`,
     to: msg.to,
@@ -82,29 +158,20 @@ export async function sendEmail(msg: {
     html: msg.html,
     text: msg.text,
     sentAt: new Date().toISOString(),
-    transport: emailConfigured() ? "resend" : "outbox",
+    transport,
   };
 
-  if (emailConfigured()) {
-    try {
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      const { error } = await resend.emails.send({
-        from: FROM,
-        to: msg.to,
-        subject: msg.subject,
-        html: msg.html,
-        text: msg.text,
-      });
-      if (error) record.error = error.message;
-    } catch (err) {
-      record.error = err instanceof Error ? err.message : String(err);
-    }
+  try {
+    if (transport === "agentmail") record.error = await viaAgentMail(msg);
+    else if (transport === "resend") record.error = await viaResend(msg);
+  } catch (err) {
+    record.error = err instanceof Error ? err.message : String(err);
   }
 
   if (record.error) {
-    console.error(`[email] ${msg.to} — ${msg.subject} FAILED: ${record.error}`);
+    console.error(`[email:${transport}] ${msg.to} — ${msg.subject} FAILED: ${record.error}`);
   } else {
-    console.log(`[email:${record.transport}] ${msg.to} — ${msg.subject}`);
+    console.log(`[email:${transport}] ${msg.to} — ${msg.subject}`);
   }
 
   await exec(

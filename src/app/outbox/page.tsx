@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Mail, MailX } from "lucide-react";
 import { Eyebrow, Logo } from "@/components/brand";
 import { Button } from "@/components/ui/button";
-import { emailConfigured, outbox } from "@/lib/email";
+import { emailConfigured, outbox, transportLabel } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Outbox | Brewed" };
@@ -17,6 +17,7 @@ export const metadata = { title: "Outbox | Brewed" };
 export default async function OutboxPage() {
   const messages = await outbox();
   const live = emailConfigured();
+  const transport = transportLabel();
 
   return (
     <main className="paper-grain min-h-screen pb-20">
@@ -38,15 +39,16 @@ export default async function OutboxPage() {
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-bark">
             {live ? (
               <>
-                Resend is configured, so these went out for real. Note that
-                Resend&apos;s shared sender only delivers to the address that owns
-                the account until you verify a domain.
+                Sending through <strong className="text-ink">{transport}</strong>,
+                so these went out for real. This page is the log.
               </>
             ) : (
               <>
-                No <code className="rounded bg-sand px-1">RESEND_API_KEY</code> is
-                set, so nothing left this machine. Verification codes, welcome
-                notes, and match emails all land here instead.
+                No mail provider is configured, so nothing left this machine.
+                Verification codes, welcome notes, and match emails all land here
+                instead. Set{" "}
+                <code className="rounded bg-sand px-1">AGENTMAIL_API_KEY</code> to
+                send for real.
               </>
             )}
           </p>
@@ -71,10 +73,14 @@ export default async function OutboxPage() {
                   <span className="text-xs font-semibold text-olive">to {m.to}</span>
                   <span
                     className={`ml-auto rounded-full border-2 border-ink px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider ${
-                      m.error ? "bg-berry text-white" : m.transport === "resend" ? "bg-matcha text-white" : "bg-primary text-ink"
+                      m.error
+                        ? "bg-berry text-white"
+                        : m.transport === "outbox"
+                          ? "bg-primary text-ink"
+                          : "bg-matcha text-white"
                     }`}
                   >
-                    {m.error ? "failed" : m.transport === "resend" ? "delivered" : "captured"}
+                    {m.error ? "failed" : m.transport === "outbox" ? "captured" : m.transport}
                   </span>
                 </header>
                 {m.error && (

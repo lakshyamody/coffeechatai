@@ -73,7 +73,7 @@ export function LoginFlow({ initialEmail = "" }: { initialEmail?: string }) {
       setDelivery(data.delivery ?? null);
       setStage("code");
       toast.success(
-        data.delivery === "resend" ? `Code sent to ${data.email}.` : "Code generated.",
+        data.delivery === "outbox" ? "Code generated." : `Code sent to ${data.email}.`,
       );
     } catch {
       toast.error("Couldn't reach the server.");
@@ -285,9 +285,9 @@ export function LoginFlow({ initialEmail = "" }: { initialEmail?: string }) {
               </p>
             </div>
           )}
-          {delivery === "resend" && !mailBlocked && (
+          {delivery && delivery !== "outbox" && !mailBlocked && (
             <p className="mt-3 text-xs text-olive">
-              Sent via Resend. Nothing there? Check spam.
+              Sent via {delivery}. Nothing there? Check spam.
             </p>
           )}
 

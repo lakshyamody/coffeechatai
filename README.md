@@ -146,9 +146,16 @@ Four emails: the verification code, a welcome note carrying the extracted
 summary, the Wednesday match (with **the other person's address**, so the two
 of them can arrange it directly), and a feedback request.
 
-With no `RESEND_API_KEY`, every message is captured at **`/outbox`** and
-rendered there instead of being delivered — which is what makes the whole
-email flow demoable with no credentials.
+Three transports, first configured wins:
+
+| | |
+| --- | --- |
+| **AgentMail** | `AGENTMAIL_API_KEY`. Sends from an AgentMail inbox on their own verified domain, so mail reaches **any** recipient. This is the one to use for a real pool. |
+| **Resend** | `RESEND_API_KEY`. Needs no domain setup, but the shared sender only delivers to the Resend account owner until you verify a domain of your own — so members other than you never receive their code. |
+| **Outbox** | Neither key set. Nothing leaves the machine; every message is recorded and rendered at **`/outbox`**, which is what makes the whole email flow demoable with no credentials. |
+
+Whichever runs, `/outbox` is the log, and the transport that carried each
+message is shown against it.
 
 ## Layout
 

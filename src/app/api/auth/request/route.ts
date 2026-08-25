@@ -25,11 +25,13 @@ export async function POST(request: Request) {
   // A code nobody can read is a dead end. Say so here rather than leaving
   // someone staring at an empty inbox and an code box.
   if (sent.error) {
+    // Resend's shared sender refuses anyone but the account owner. Worth
+    // naming precisely, because the fix is configuration rather than retrying.
     const restricted = /only send testing emails|verify a domain/i.test(sent.error);
     return NextResponse.json(
       {
         error: restricted
-          ? "We can't email this address yet. The sending domain isn't verified, so mail only reaches the Resend account owner."
+          ? "We can't email this address yet. The sending domain isn't verified, so mail only reaches the provider account owner."
           : "We couldn't send that email.",
         detail: sent.error,
         restricted,
