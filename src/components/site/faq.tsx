@@ -1,5 +1,5 @@
 import { Eyebrow } from "@/components/brand";
-import { ROUND_SCHEDULE, closesAt } from "@/lib/schedule";
+import { ROUND_LABELS, closesAt } from "@/lib/schedule";
 import { SCORE_TERMS } from "@/lib/scoring";
 import {
   Accordion,
@@ -11,15 +11,15 @@ import {
 const QUESTIONS = [
   {
     q: "How does the pairing actually work?",
-    a: `${ROUND_SCHEDULE.closesDay} at midnight everyone who's opted in goes into one pool. We score every viable pair on ${SCORE_TERMS.length} things — whether you each have what the other asked for, how much context you share, whether the seniority gap is the one you wanted, whether your calendars overlap, whether your values and personalities fit, and whether you're different enough to learn something. Then we solve for the arrangement that's best across the whole round, not just best for whoever signed up first.`,
+    a: `${ROUND_LABELS.closesDay} at midnight everyone who's opted in goes into one pool. We score every viable pair on ${SCORE_TERMS.length} things — whether you each have what the other asked for, how much context you share, whether the seniority gap is the one you wanted, whether your calendars overlap, whether your values and personalities fit, and whether you're different enough to learn something. Then we solve for the arrangement that's best across the whole round, not just best for whoever signed up first.`,
   },
   {
     q: "How do I sign in?",
-    a: `With your email and a six-digit code. Everything else runs through that address too: the confirmation when you join, your match every ${ROUND_SCHEDULE.sendsDay}, and the note asking how it went. Use an inbox you actually read. You can also set a password afterwards so signing back in doesn't need the inbox at all.`,
+    a: `With your email and a six-digit code. Everything else runs through that address too: the confirmation when you join, your match every ${ROUND_LABELS.sendsDay}, and the note asking how it went. Use an inbox you actually read. You can also set a password afterwards so signing back in doesn't need the inbox at all.`,
   },
   {
     q: "Do you give out my email address?",
-    a: `To exactly one person a week: the person you're matched with, who gets it at the same moment you get theirs. Nobody else can see it, there's no directory, and there's no way to browse for you. If you'd rather not be reachable that week, opt out before ${ROUND_SCHEDULE.closesDay}.`,
+    a: `To exactly one person a week: the person you're matched with, who gets it at the same moment you get theirs. Nobody else can see it, there's no directory, and there's no way to browse for you. If you'd rather not be reachable that week, opt out before ${ROUND_LABELS.closesDay}.`,
   },
   {
     q: "What does the AI actually do?",

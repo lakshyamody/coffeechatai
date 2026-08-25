@@ -5,6 +5,8 @@ import { OptInButton } from "@/components/app/opt-in-button";
 import { Button } from "@/components/ui/button";
 import { currentRound, getProfile, getRoundNumber, profileCount } from "@/lib/store";
 import { currentProfile } from "@/lib/session";
+import { closesAt, roundPhase, sendsAt, zoneAbbreviation } from "@/lib/schedule";
+import { Countdown } from "@/components/site/countdown";
 import { pairingFor } from "@/lib/matching";
 import { explain, starters } from "@/lib/scoring";
 import { popcount } from "@/lib/availability";
@@ -27,8 +29,18 @@ const toReveal = (p: Profile): RevealPerson => ({
 });
 
 function Shell({ children }: { children: React.ReactNode }) {
+  const phase = roundPhase();
   return (
     <main className="paper-grain min-h-screen">
+      <div className="border-b-2 border-ink bg-primary/25 px-5 py-2 text-center">
+        <Countdown
+          className="text-xs font-semibold text-bark"
+          deadlineIso={phase.deadline.toISOString()}
+          label={phase.label}
+          zone={zoneAbbreviation()}
+          fallback={phase.phase === "open" ? closesAt : sendsAt}
+        />
+      </div>
       <div className="mx-auto flex max-w-3xl items-center justify-between px-5 pt-8">
         <Link href="/">
           <Logo />

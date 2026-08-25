@@ -8,11 +8,24 @@ import { Marquee } from "@/components/site/marquee";
 import { Button } from "@/components/ui/button";
 import { MARQUEE_ORGS } from "@/lib/orgs";
 import { Input } from "@/components/ui/input";
-import { ROUND_SCHEDULE, closesAt, sendsAt } from "@/lib/schedule";
+import { ROUND_LABELS, sendsAt } from "@/lib/schedule";
+import { Countdown } from "@/components/site/countdown";
 
 const ORGS = MARQUEE_ORGS;
 
-export function Hero({ members }: { members: number }) {
+export function Hero({
+  members,
+  deadlineIso,
+  deadlineLabel,
+  deadlineFallback,
+  zone,
+}: {
+  members: number;
+  deadlineIso: string;
+  deadlineLabel: string;
+  deadlineFallback: string;
+  zone: string;
+}) {
   const router = useRouter();
   const [email, setEmail] = useState("");
 
@@ -34,15 +47,19 @@ export function Hero({ members }: { members: number }) {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-matcha opacity-70" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-matcha" />
           </span>
-          <span className="text-sm font-semibold text-bark">
-            This week&apos;s round closes {closesAt}
-          </span>
+          <Countdown
+            className="text-sm font-semibold text-bark"
+            deadlineIso={deadlineIso}
+            label={deadlineLabel}
+            zone={zone}
+            fallback={deadlineFallback}
+          />
         </div>
 
         <h1 className="font-display text-6xl leading-[0.92] tracking-tight text-ink sm:text-7xl md:text-8xl">
           One coffee chat.
           <br />
-          Every {ROUND_SCHEDULE.sendsDay}.
+          Every {ROUND_LABELS.sendsDay}.
         </h1>
 
         <div className="mx-auto mt-4 max-w-md">

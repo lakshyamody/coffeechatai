@@ -1,7 +1,7 @@
 import { Eyebrow } from "@/components/brand";
 import { PhoneMock } from "@/components/site/phone";
 import { AvailabilityPreview, MatchCardPreview, TagCloudPreview } from "@/components/site/step-art";
-import { ROUND_SCHEDULE, sendsAtShort } from "@/lib/schedule";
+import { ROUND_LABELS, sendsAtShort } from "@/lib/schedule";
 
 const STEPS = [
   {
@@ -13,7 +13,7 @@ const STEPS = [
   },
   {
     n: "02",
-    title: `We run the round ${ROUND_SCHEDULE.closesDay} night`,
+    title: `We run the round ${ROUND_LABELS.closesDay} night`,
     body:
       "Every opted-in member goes into one pool. The matcher looks at all of it at once — not a feed you scroll — and finds the pairing that's best for both of you.",
     art: <MatchCardPreview />,

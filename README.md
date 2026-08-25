@@ -206,6 +206,31 @@ runs the real schema and every query the app issues against **Postgres 18
 compiled to WASM** (PGlite) — no container, no connection string. It reads the
 DDL straight out of `src/lib/db.ts` so the test can't drift from the code.
 
+## Scheduling
+
+Rounds run themselves. `/api/cron/tick` is the only moving part, and it is
+**idempotent**: it works out what should have happened by now and does only
+the parts that haven't. Running it late, or twice, or on a day when nothing is
+due, is harmless — which matters when the side effect is emailing everybody.
+
+- Entries close → solve and **freeze** the pairings, so the match someone is
+  emailed on Wednesday is the one the round actually solved on Tuesday night,
+  even though the pool keeps changing in between.
+- Send time passes → email both halves of every pairing, record the chats in
+  each member's history, open the next round.
+- A missed close is recovered on the send tick rather than skipping a week.
+- On a database that has never ticked, the first run records where we are and
+  stops. Without that, every past deadline reads as "due" and a fresh
+  deployment emails the whole pool on whatever day it came up.
+
+The schedule lives in `src/lib/schedule.ts`, anchored to an explicit IANA zone
+(`BREWED_TIMEZONE`, default `Asia/Kolkata`) — "Tuesday 11:59pm" means nothing
+to a pool split across San Francisco, Bangalore and Singapore unless you say
+whose Tuesday, so the zone is shown in the UI. Deadlines are computed with
+`Intl` rather than a date library, and survive daylight-saving transitions.
+
+Cron wiring and why the UTC expressions look arbitrary: see `CRON.md`.
+
 ## Storage
 
 Two dialects behind one interface, chosen by whether `POSTGRES_URL` /

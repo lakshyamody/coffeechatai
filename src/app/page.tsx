@@ -1,5 +1,6 @@
 import { SiteNav } from "@/components/site/nav";
 import { liveStats } from "@/lib/store";
+import { closesAt, roundPhase, sendsAt, zoneAbbreviation } from "@/lib/schedule";
 import { Hero } from "@/components/site/hero";
 import { HowItWorks } from "@/components/site/how-it-works";
 import { Proof } from "@/components/site/proof";
@@ -14,11 +15,19 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const stats = await liveStats();
+  // One clock, on the server, in one timezone. The client only ticks it down.
+  const phase = roundPhase();
   return (
     <>
       <SiteNav />
       <main>
-        <Hero members={stats.members} />
+        <Hero
+          members={stats.members}
+          deadlineIso={phase.deadline.toISOString()}
+          deadlineLabel={phase.label}
+          deadlineFallback={phase.phase === "open" ? closesAt : sendsAt}
+          zone={zoneAbbreviation()}
+        />
         <HowItWorks />
         <Proof />
         <Matchmaker />
