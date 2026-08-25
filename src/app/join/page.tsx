@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { JoinFlow } from "@/components/app/join-flow";
 import { getRoundNumber } from "@/lib/store";
 import { SESSION_COOKIE, readSession } from "@/lib/auth";
+import { LINKEDIN_PENDING_COOKIE } from "@/lib/linkedin";
 import { getProfile } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -22,9 +23,23 @@ export default async function JoinPage() {
 
   if (!email) redirect("/login");
 
+  // Set when they arrived through LinkedIn; used to greet them by name and to
+  // skip asking for what LinkedIn already proved.
+  let linkedinName = "";
+  try {
+    const raw = jar.get(LINKEDIN_PENDING_COOKIE)?.value;
+    if (raw) linkedinName = (JSON.parse(raw) as { name?: string }).name ?? "";
+  } catch {
+    // A malformed cookie just means no greeting.
+  }
+
   return (
     <main className="paper-grain min-h-screen">
-      <JoinFlow verifiedEmail={email} roundNumber={await getRoundNumber()} />
+      <JoinFlow
+        verifiedEmail={email}
+        roundNumber={await getRoundNumber()}
+        linkedinName={linkedinName}
+      />
     </main>
   );
 }

@@ -59,9 +59,12 @@ const DIRECTION_COPY: Record<string, string> = {
 export function JoinFlow({
   verifiedEmail,
   roundNumber,
+  linkedinName = "",
 }: {
   verifiedEmail: string;
   roundNumber: number;
+  /** Set when they signed in through LinkedIn rather than an emailed code. */
+  linkedinName?: string;
 }) {
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [linkedinText, setLinkedinText] = useState("");
@@ -236,11 +239,21 @@ export function JoinFlow({
       </div>
 
       <h1 className="mt-8 font-display text-5xl leading-none text-ink sm:text-6xl">
-        Two things and you&apos;re in
+        {linkedinName ? `Nearly there, ${linkedinName.split(" ")[0]}` : "Two things and you're in"}
       </h1>
       <p className="mt-3 text-base leading-relaxed text-bark">
-        No questionnaire. We read your background and what you want, and work
-        out the rest.
+        {linkedinName ? (
+          <>
+            LinkedIn confirmed who you are. It won&apos;t hand over your headline
+            or history, so paste those below — then one question and you&apos;re
+            done.
+          </>
+        ) : (
+          <>
+            No questionnaire. We read your background and what you want, and work
+            out the rest.
+          </>
+        )}
       </p>
 
       {/* LinkedIn */}

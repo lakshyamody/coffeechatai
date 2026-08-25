@@ -124,6 +124,19 @@ Sign-in is an emailed six-digit code. Codes are stored hashed, expire in 10
 minutes, and burn after 5 wrong guesses. Sessions are stateless HMAC tokens,
 so a restart doesn't sign everyone out mid-round.
 
+**Sign In with LinkedIn** is offered when `LINKEDIN_CLIENT_ID` and
+`LINKEDIN_CLIENT_SECRET` are set — hand-rolled OpenID Connect rather than an
+auth library, so LinkedIn's session model doesn't collide with the one already
+here. It confirms email and name in a single step, replacing the emailed code.
+
+It does **not** feed the matcher, and the UI says so. LinkedIn's self-serve
+OIDC returns `sub`, `name`, `picture`, `email` and nothing else — no headline,
+no employer, no history. Reading a real profile requires their partner
+programme, which isn't self-serve, so members still paste their profile text.
+
+The button is hidden unless both values are present, so a half-configured
+deployment shows the code flow rather than a button that dead-ends.
+
 A password is optional on top of that: set one and you can sign straight in
 next time instead of waiting on an email. Hashed with scrypt and a per-password
 salt. New members are offered it at the end of onboarding rather than at

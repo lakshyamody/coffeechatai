@@ -23,6 +23,7 @@ import {
   normaliseEmail,
   readSession,
 } from "@/lib/auth";
+import { LINKEDIN_PENDING_COOKIE } from "@/lib/linkedin";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -103,9 +104,18 @@ export async function POST(request: Request) {
     ? (draft.format as Format)
     : (existing?.format ?? "either");
 
+  // LinkedIn proved the name; prefer it over anything guessed from the paste.
+  let linkedin: { sub?: string; name?: string } = {};
+  try {
+    const raw = jar.get(LINKEDIN_PENDING_COOKIE)?.value;
+    if (raw) linkedin = JSON.parse(raw) as { sub?: string; name?: string };
+  } catch {
+    // Malformed cookie: fall back to the extracted name.
+  }
+
   const role = fields.role || "Curious human";
   const company = fields.company || "Independent";
-  const name = fields.name || existing?.name || email.split("@")[0];
+  const name = linkedin.name || fields.name || existing?.name || email.split("@")[0];
 
   const profile: Profile = {
     id: existing?.id ?? nextId(),
@@ -136,6 +146,7 @@ export async function POST(request: Request) {
     emailVerified: true,
     structured,
     linkedinUrl: linkedinUrl || existing?.linkedinUrl,
+    linkedinSub: linkedin.sub ?? existing?.linkedinSub,
   };
 
   await upsertProfile(profile);
@@ -174,5 +185,6 @@ export async function POST(request: Request) {
   });
   response.cookies.set(SESSION_COOKIE, issueSession(profile.id), SESSION_COOKIE_OPTIONS);
   response.cookies.set("brewed_pending_email", "", { path: "/", maxAge: 0 });
+  response.cookies.set(LINKEDIN_PENDING_COOKIE, "", { path: "/", maxAge: 0 });
   return response;
 }

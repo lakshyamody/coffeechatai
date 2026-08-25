@@ -60,6 +60,8 @@ export interface Profile {
   emailVerified: boolean;
   /** Their LinkedIn, kept so a match can look them up before meeting. */
   linkedinUrl?: string;
+  /** OIDC subject, set when they signed in through LinkedIn. */
+  linkedinSub?: string;
   /**
    * Optional. `scrypt$salt$hash` once set. Email codes keep working either
    * way — a password only saves the trip to your inbox.

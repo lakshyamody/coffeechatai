@@ -2,8 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { ArrowRight, KeyRound, Loader2, MailCheck, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  KeyRound,
+  Loader2,
+  MailCheck,
+  ShieldCheck,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { CoffeeCup, Logo } from "@/components/brand";
@@ -13,7 +20,15 @@ import { Label } from "@/components/ui/label";
 
 type Stage = "email" | "password" | "code" | "set-password";
 
-export function LoginFlow({ initialEmail = "" }: { initialEmail?: string }) {
+export function LoginFlow({
+  initialEmail = "",
+  linkedinEnabled = false,
+  initialError = "",
+}: {
+  initialEmail?: string;
+  linkedinEnabled?: boolean;
+  initialError?: string;
+}) {
   const router = useRouter();
   const [stage, setStage] = useState<Stage>("email");
   const [email, setEmail] = useState(initialEmail);
@@ -25,6 +40,10 @@ export function LoginFlow({ initialEmail = "" }: { initialEmail?: string }) {
   const [delivery, setDelivery] = useState<string | null>(null);
   const [mailBlocked, setMailBlocked] = useState<string | null>(null);
   const [nextPath, setNextPath] = useState("/dashboard");
+
+  useEffect(() => {
+    if (initialError) toast.error(initialError);
+  }, [initialError]);
 
   const post = async (path: string, body: unknown) => {
     const res = await fetch(path, {
@@ -181,6 +200,33 @@ export function LoginFlow({ initialEmail = "" }: { initialEmail?: string }) {
           >
             Continue <ArrowRight className="ml-1 h-5 w-5" />
           </Button>
+
+          {linkedinEnabled && (
+            <>
+              <div className="my-5 flex items-center gap-3">
+                <span className="h-0.5 flex-1 bg-sand" />
+                <span className="text-xs font-bold uppercase tracking-wider text-olive">
+                  or
+                </span>
+                <span className="h-0.5 flex-1 bg-sand" />
+              </div>
+              <Button
+                asChild
+                type="button"
+                className="sticker sticker-press h-12 w-full rounded-xl bg-sky font-display text-xl tracking-wide text-white hover:bg-sky"
+              >
+                <a href="/api/auth/linkedin/start">
+                  <BriefcaseBusiness className="mr-2 h-5 w-5" />
+                  Continue with LinkedIn
+                </a>
+              </Button>
+              <p className="mt-3 text-xs leading-relaxed text-olive">
+                Confirms your email and name in one step, so there&apos;s no code
+                to wait for. You&apos;ll still paste your profile — LinkedIn
+                doesn&apos;t let apps read it.
+              </p>
+            </>
+          )}
         </form>
       )}
 
