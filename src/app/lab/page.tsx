@@ -6,6 +6,8 @@ import { allProfiles, currentRound, getRoundNumber } from "@/lib/store";
 import { WEIGHTS } from "@/lib/scoring";
 import { popcount } from "@/lib/availability";
 import { cityByName } from "@/lib/cities";
+import { adminTokenConfigured, isOperator } from "@/lib/admin";
+import { OperatorLocked } from "@/components/app/operator-locked";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Matching lab | Brewed" };
@@ -23,7 +25,14 @@ const STRATEGY_COPY: Record<string, { title: string; body: string }> = {
   },
 };
 
-export default async function LabPage() {
+export default async function LabPage({ searchParams }: PageProps<"/lab">) {
+  const params = await searchParams;
+  const token = typeof params?.key === "string" ? params.key : undefined;
+  // The lab lists every member by name alongside who they were paired with.
+  if (!(await isOperator(token))) {
+    return <OperatorLocked what="matching lab" configured={adminTokenConfigured()} />;
+  }
+
   const round = await currentRound();
   const roundNumber = await getRoundNumber();
   const profiles = await allProfiles();

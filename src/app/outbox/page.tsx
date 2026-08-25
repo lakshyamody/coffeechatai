@@ -3,6 +3,8 @@ import { Mail, MailX } from "lucide-react";
 import { Eyebrow, Logo } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { emailConfigured, outbox, transportLabel } from "@/lib/email";
+import { adminTokenConfigured, isOperator, redactCodes } from "@/lib/admin";
+import { OperatorLocked } from "@/components/app/operator-locked";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Outbox | Brewed" };
@@ -14,8 +16,22 @@ export const metadata = { title: "Outbox | Brewed" };
  * the log; without one nothing left the machine and this is the only place to
  * read them — which is what makes the whole email flow demoable with no setup.
  */
-export default async function OutboxPage() {
-  const messages = await outbox();
+export default async function OutboxPage({ searchParams }: PageProps<"/outbox">) {
+  const params = await searchParams;
+  const token = typeof params?.key === "string" ? params.key : undefined;
+  if (!(await isOperator(token))) {
+    return <OperatorLocked what="outbox" configured={adminTokenConfigured()} />;
+  }
+
+  // Redact on the way in, not at each use site: the subject is rendered in
+  // the header *and* set as the iframe title, and missing one of those put
+  // live codes back on the page.
+  const messages = (await outbox()).map((m) => ({
+    ...m,
+    subject: redactCodes(m.subject),
+    html: redactCodes(m.html),
+    text: redactCodes(m.text),
+  }));
   const live = emailConfigured();
   const transport = transportLabel();
 
