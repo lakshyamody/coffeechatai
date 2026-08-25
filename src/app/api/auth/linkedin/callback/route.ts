@@ -8,8 +8,13 @@ import {
   fetchIdentity,
   validState,
 } from "@/lib/linkedin";
-import { SESSION_COOKIE, SESSION_COOKIE_OPTIONS, issueSession } from "@/lib/auth";
-import { getProfileByEmail, upsertProfile } from "@/lib/store";
+import {
+  SESSION_COOKIE,
+  SESSION_COOKIE_OPTIONS,
+  issueSession,
+  readSession,
+} from "@/lib/auth";
+import { getProfile, getProfileByEmail, upsertProfile } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -39,35 +44,46 @@ export async function GET(request: Request) {
     return fail(error instanceof Error ? error.message : "LinkedIn sign-in failed.");
   }
 
-  const existing = await getProfileByEmail(identity.email);
+  // LinkedIn is connected *after* email verification, so there is always a
+  // verified address in play. Without one, someone reached this out of order.
+  const sessionId = readSession(jar.get(SESSION_COOKIE)?.value);
+  const sessionProfile = sessionId ? await getProfile(sessionId) : null;
+  const pendingEmail = jar.get("brewed_pending_email")?.value;
+  const verifiedEmail = sessionProfile?.email ?? pendingEmail;
+
+  if (!verifiedEmail) {
+    return fail("Confirm your email first, then connect LinkedIn.");
+  }
+
+  // Connecting an account whose LinkedIn address differs from the verified
+  // one is fine — people sign up with a work address and use a personal
+  // LinkedIn. The verified address stays authoritative.
+  const existing = sessionProfile ?? (await getProfileByEmail(verifiedEmail));
 
   if (existing) {
     // Returning member: sign them in and record the LinkedIn identity.
     await upsertProfile({
       ...existing,
-      name: existing.name || identity.name,
+      name: identity.name || existing.name,
       emailVerified: true,
       linkedinSub: identity.sub,
     });
-    const response = NextResponse.redirect(`${origin}/dashboard`);
+    const response = NextResponse.redirect(`${origin}/join`);
     response.cookies.set(SESSION_COOKIE, issueSession(existing.id), SESSION_COOKIE_OPTIONS);
+    response.cookies.set(
+      LINKEDIN_PENDING_COOKIE,
+      JSON.stringify({ sub: identity.sub, name: identity.name, picture: identity.picture, email: identity.email }),
+      { httpOnly: true, sameSite: "lax", path: "/", maxAge: 3600 },
+    );
     response.cookies.delete(LINKEDIN_STATE_COOKIE);
     return response;
   }
 
-  // New member: LinkedIn has proven the address, so skip the emailed code and
-  // carry the identity into onboarding. There is no account to attach a
-  // session to until they finish enrolling.
+  // Mid-onboarding: carry the identity back to the one remaining question.
   const response = NextResponse.redirect(`${origin}/join`);
-  response.cookies.set("brewed_pending_email", identity.email, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 3600,
-  });
   response.cookies.set(
     LINKEDIN_PENDING_COOKIE,
-    JSON.stringify({ sub: identity.sub, name: identity.name, picture: identity.picture }),
+    JSON.stringify({ sub: identity.sub, name: identity.name, picture: identity.picture, email: identity.email }),
     { httpOnly: true, sameSite: "lax", path: "/", maxAge: 3600 },
   );
   response.cookies.delete(LINKEDIN_STATE_COOKIE);

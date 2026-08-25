@@ -174,14 +174,40 @@ export function heuristicExtract(input: ExtractorInput): Extracted {
         ? "peer"
         : "any";
 
+  /**
+   * Crude negation check.
+   *
+   * "not looking to be recruited" contains "recruit", and a bare keyword match
+   * read that as *wanting* to be hired — the exact opposite of what the person
+   * wrote. Look at the words just before a hit before believing it.
+   */
+  const negated = (re: RegExp): boolean => {
+    const hit = re.exec(wants);
+    if (!hit) return false;
+    const before = wants.slice(Math.max(0, hit.index - 40), hit.index);
+    return /\b(not|no|never|rather not|don'?t|avoid|without|isn'?t|aren'?t)\b[^.]*$/.test(
+      before,
+    );
+  };
+  const wantsIt = (re: RegExp) => re.test(wants) && !negated(re);
+
   const seeks: string[] = [];
-  if (/fundrais|investor|raise|vc\b/.test(wants)) seeks.push("fundraising");
-  if (/hire|hiring|recruit|role|job/.test(wants)) seeks.push("get-hired" in {} ? "hiring" : "hiring");
-  if (/cofounder|co-founder/.test(wants)) seeks.push("cofounder");
-  if (/market|customer|gtm|go.to.market|growth/.test(wants)) seeks.push("go-to-market");
-  if (/mentor|advice|career|path/.test(wants)) seeks.push("career-path");
-  if (/technical|craft|engineer|architecture/.test(wants)) seeks.push("craft");
+  if (wantsIt(/fundrais|investor|raise\b|vc\b/)) seeks.push("fundraising");
+  if (wantsIt(/hire|hiring|recruit|new role|a job/)) seeks.push("hiring");
+  if (wantsIt(/cofounder|co-founder/)) seeks.push("cofounder");
+  if (wantsIt(/market|customer|gtm|go.to.market|growth/)) seeks.push("go-to-market");
+  if (wantsIt(/mentor|advice|career|path/)) seeks.push("career-path");
+  if (wantsIt(/technical|craft|engineer|architecture/)) seeks.push("craft");
   if (!seeks.length) seeks.push(direction === "peer" ? "swap-notes" : "just-interesting");
+
+  // The same phrasing that must not become a "seek" is a real deal-breaker.
+  const dealBreakers: Array<(typeof DEAL_BREAKER_IDS)[number]> = [];
+  if (/\b(not|no|never|rather not|don'?t)\b[^.]*\b(recruit|hired|headhunt)/.test(wants)) {
+    dealBreakers.push("no-recruiters");
+  }
+  if (/\b(not|no|never|rather not|don'?t)\b[^.]*\b(pitch|sold|sales)/.test(wants)) {
+    dealBreakers.push("no-sales-pitches");
+  }
 
   const seniorityGuess: Seniority = /student|intern|undergrad/i.test(all)
     ? 0
@@ -210,7 +236,7 @@ export function heuristicExtract(input: ExtractorInput): Extracted {
     lifestyle: ["flexible on where they meet"],
     interests: topics,
     connectionGoals: [input.wantToMeet.trim().slice(0, 90) || "meeting someone interesting"],
-    dealBreakers: [],
+    dealBreakers,
     preferences: [],
   };
 }

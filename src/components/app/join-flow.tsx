@@ -59,13 +59,17 @@ const DIRECTION_COPY: Record<string, string> = {
 export function JoinFlow({
   verifiedEmail,
   roundNumber,
-  linkedinName = "",
+  linkedin,
+  linkedinEnabled,
 }: {
   verifiedEmail: string;
   roundNumber: number;
-  /** Set when they signed in through LinkedIn rather than an emailed code. */
-  linkedinName?: string;
+  /** Present once they've connected LinkedIn. */
+  linkedin: { name?: string; picture?: string; email?: string } | null;
+  /** False until the LinkedIn app credentials are configured. */
+  linkedinEnabled: boolean;
 }) {
+  const connected = Boolean(linkedin);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [linkedinText, setLinkedinText] = useState("");
   const [wantToMeet, setWantToMeet] = useState("");
@@ -81,7 +85,7 @@ export function JoinFlow({
     source: string;
   } | null>(null);
 
-  const ready = wantToMeet.trim().length >= 10 && (linkedinText.trim().length >= 20 || linkedinUrl.trim());
+  const ready = wantToMeet.trim().length >= 10 && (connected || linkedinText.trim().length >= 20 || linkedinUrl.trim());
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,8 +131,10 @@ export function JoinFlow({
           You&apos;re in round {roundNumber}
         </h1>
         <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-bark">
-          Check your inbox — we&apos;ve emailed you a confirmation. {sendsAt} you&apos;ll
-          get one person, why the two of you, and their email.
+          That&apos;s everything. A confirmation is in your inbox now, and{" "}
+          {sendsAt} you&apos;ll get one person, why the two of you, and their
+          email address. <strong className="text-ink">You don&apos;t need to come
+          back here.</strong>
         </p>
 
         <div className="sticker-lg mt-8 rounded-2xl p-5 text-left">
@@ -215,12 +221,14 @@ export function JoinFlow({
 
         <SetPasswordCard />
 
-        <Button
-          asChild
-          className="sticker sticker-press mt-6 h-12 rounded-xl bg-primary px-7 font-display text-xl tracking-wide text-ink hover:bg-primary"
-        >
-          <Link href="/dashboard">See your match →</Link>
-        </Button>
+        <p className="mt-8 text-sm text-olive">
+          If you ever want to change your answer or opt out of a week, it&apos;s
+          all on{" "}
+          <Link href="/dashboard" className="font-semibold text-roast underline">
+            your dashboard
+          </Link>
+          .
+        </p>
       </div>
     );
   }
@@ -239,65 +247,105 @@ export function JoinFlow({
       </div>
 
       <h1 className="mt-8 font-display text-5xl leading-none text-ink sm:text-6xl">
-        {linkedinName ? `Nearly there, ${linkedinName.split(" ")[0]}` : "Two things and you're in"}
+        {connected
+          ? `One question, ${(linkedin?.name ?? "").split(" ")[0] || "and you're in"}`
+          : "Connect LinkedIn"}
       </h1>
       <p className="mt-3 text-base leading-relaxed text-bark">
-        {linkedinName ? (
-          <>
-            LinkedIn confirmed who you are. It won&apos;t hand over your headline
-            or history, so paste those below — then one question and you&apos;re
-            done.
-          </>
-        ) : (
-          <>
-            No questionnaire. We read your background and what you want, and work
-            out the rest.
-          </>
-        )}
+        {connected
+          ? "Last step. After this, everything happens in your inbox — the weekly match, who they are, and their email. You never have to come back here."
+          : "So we know who you are. Then one question, and you're done."}
       </p>
 
+      <ol className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-xs font-semibold text-olive">
+        <li className="text-matcha">1. Email confirmed ✓</li>
+        <li className={connected ? "text-matcha" : "text-ink"}>
+          2. Connect LinkedIn {connected ? "✓" : ""}
+        </li>
+        <li className={connected ? "text-ink" : ""}>3. One question</li>
+      </ol>
+
       {/* LinkedIn */}
-      <section className="sticker-lg mt-8 rounded-2xl p-5">
+      <section className="sticker-lg mt-7 rounded-2xl p-5">
         <div className="flex items-center gap-2">
           <BriefcaseBusiness className="h-5 w-5 text-sky" />
           <h2 className="font-display text-2xl tracking-wide text-ink">
-            Your LinkedIn
+            {connected ? "LinkedIn connected" : "Your LinkedIn"}
           </h2>
         </div>
 
-        <div className="mt-4 flex flex-col gap-1.5">
-          <Label className="text-xs font-bold uppercase tracking-wider text-olive">
-            Profile URL
-          </Label>
-          <Input
-            value={linkedinUrl}
-            onChange={(e) => setLinkedinUrl(e.target.value)}
-            placeholder="linkedin.com/in/yourname"
-            className="sticker h-11 rounded-lg focus-visible:ring-0"
-          />
-        </div>
-
-        <div className="mt-4 flex flex-col gap-1.5">
-          <Label className="text-xs font-bold uppercase tracking-wider text-olive">
-            Paste your headline, about, and recent roles
-          </Label>
-          <Textarea
-            value={linkedinText}
-            onChange={(e) => setLinkedinText(e.target.value)}
-            rows={7}
-            maxLength={6000}
-            placeholder={`Staff Engineer at Stripe · Bangalore
-
-About: I work on payments reliability — mostly the ledger path and the things that go wrong at p99. Before Stripe I spent four years at a marketplace startup that didn't make it, which taught me more than the years that worked.
-
-Experience: Staff Engineer, Stripe (2022–now) · Senior Engineer, Verdant (2018–2022)`}
-            className="sticker rounded-lg text-sm focus-visible:ring-0"
-          />
-          <p className="text-xs leading-relaxed text-olive">
-            Select your profile, copy, paste. LinkedIn doesn&apos;t let apps read
-            this for you — see the note at the bottom.
+        {connected ? (
+          <div className="mt-4 flex items-center gap-3 rounded-xl border-2 border-ink bg-cream p-3">
+            <Avatar
+              name={linkedin?.name ?? verifiedEmail}
+              seed={7}
+              className="h-11 w-11 text-sm"
+            />
+            <div className="min-w-0">
+              <p className="font-display text-lg leading-tight tracking-wide text-ink">
+                {linkedin?.name || "Connected"}
+              </p>
+              <p className="truncate text-xs font-semibold text-olive">
+                {linkedin?.email ?? verifiedEmail}
+              </p>
+            </div>
+            <ShieldCheck className="ml-auto h-5 w-5 shrink-0 text-matcha" strokeWidth={2.5} />
+          </div>
+        ) : linkedinEnabled ? (
+          <>
+            <p className="mt-2 text-sm leading-relaxed text-bark">
+              One click. We read your name and confirm it&apos;s you.
+            </p>
+            <Button
+              asChild
+              type="button"
+              className="sticker sticker-press mt-4 h-12 w-full rounded-xl bg-sky font-display text-xl tracking-wide text-white hover:bg-sky"
+            >
+              <a href="/api/auth/linkedin/start">
+                <BriefcaseBusiness className="mr-2 h-5 w-5" />
+                Connect LinkedIn
+              </a>
+            </Button>
+          </>
+        ) : (
+          <p className="mt-2 rounded-xl border-2 border-dashed border-sand bg-cream p-3 text-xs leading-relaxed text-olive">
+            LinkedIn sign-in isn&apos;t configured on this deployment yet, so paste
+            your details below instead.
           </p>
-        </div>
+        )}
+
+        {/*
+          LinkedIn's API hands over a name and nothing else — no headline,
+          employer or history. Without something here the matcher has only the
+          one question to work from, so this stays available, optional, and
+          folded away.
+        */}
+        <details className="mt-4" open={!connected && !linkedinEnabled}>
+          <summary className="cursor-pointer text-xs font-semibold text-bark">
+            Add your headline and recent roles{" "}
+            <span className="font-normal text-olive">
+              — optional, but it&apos;s what makes the match good
+            </span>
+          </summary>
+          <div className="mt-3 flex flex-col gap-2">
+            <Input
+              value={linkedinUrl}
+              onChange={(e) => setLinkedinUrl(e.target.value)}
+              placeholder="linkedin.com/in/yourname"
+              className="sticker h-11 rounded-lg focus-visible:ring-0"
+            />
+            <Textarea
+              value={linkedinText}
+              onChange={(e) => setLinkedinText(e.target.value)}
+              rows={5}
+              maxLength={6000}
+              placeholder={`Staff Engineer at Stripe · Bangalore
+
+About: I work on payments reliability — mostly the ledger path and the things that go wrong at p99.`}
+              className="sticker rounded-lg text-sm focus-visible:ring-0"
+            />
+          </div>
+        </details>
       </section>
 
       {/* the one question */}
@@ -338,7 +386,7 @@ Experience: Staff Engineer, Stripe (2022–now) · Senior Engineer, Verdant (201
         <div className="mt-4 flex flex-col gap-5">
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs font-bold uppercase tracking-wider text-olive">
-              City <span className="font-normal normal-case">(blank = read from your LinkedIn)</span>
+              City
             </Label>
             <Input
               value={city}
@@ -374,11 +422,10 @@ Experience: Staff Engineer, Stripe (2022–now) · Senior Engineer, Verdant (201
       </Button>
 
       <p className="mt-5 rounded-xl border-2 border-dashed border-sand bg-cream p-3 text-xs leading-relaxed text-olive">
-        <strong className="text-bark">Why paste instead of connect?</strong>{" "}
-        LinkedIn&apos;s public API returns only your name, photo and email — no
-        headline, employer or history. Reading a profile needs their partner
-        programme, which isn&apos;t self-serve. Pasting is the honest way to get
-        the substance we actually match on.
+        <strong className="text-bark">That&apos;s the last screen.</strong>{" "}
+        From here everything arrives by email: your match each week, why the two
+        of you, and their address so you can arrange it directly. Nothing to
+        check, nothing to log back into.
       </p>
     </form>
   );

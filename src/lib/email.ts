@@ -60,7 +60,7 @@ export async function clearOutbox(): Promise<void> {
 }
 
 const AGENTMAIL_INBOX =
-  process.env.AGENTMAIL_INBOX_ID ?? "agency-leads@agentmail.to";
+  process.env.AGENTMAIL_INBOX_ID ?? "crashh@agentmail.to";
 
 export function activeTransport(): Transport {
   return process.env.AGENTMAIL_API_KEY ? "agentmail" : "outbox";

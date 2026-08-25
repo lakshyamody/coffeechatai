@@ -3,14 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  ArrowRight,
-  BriefcaseBusiness,
-  KeyRound,
-  Loader2,
-  MailCheck,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, KeyRound, Loader2, MailCheck, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { CoffeeCup, Logo } from "@/components/brand";
@@ -22,11 +15,9 @@ type Stage = "email" | "password" | "code" | "set-password";
 
 export function LoginFlow({
   initialEmail = "",
-  linkedinEnabled = false,
   initialError = "",
 }: {
   initialEmail?: string;
-  linkedinEnabled?: boolean;
   initialError?: string;
 }) {
   const router = useRouter();
@@ -175,8 +166,8 @@ export function LoginFlow({
             Sign in
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-bark">
-            Everything about your match arrives by email, so use one you actually
-            read.
+            Confirm your address, connect LinkedIn, answer one question. After
+            that everything happens in your inbox — so use one you actually read.
           </p>
 
           <div className="mt-7 flex flex-col gap-1.5">
@@ -201,32 +192,6 @@ export function LoginFlow({
             Continue <ArrowRight className="ml-1 h-5 w-5" />
           </Button>
 
-          {linkedinEnabled && (
-            <>
-              <div className="my-5 flex items-center gap-3">
-                <span className="h-0.5 flex-1 bg-sand" />
-                <span className="text-xs font-bold uppercase tracking-wider text-olive">
-                  or
-                </span>
-                <span className="h-0.5 flex-1 bg-sand" />
-              </div>
-              <Button
-                asChild
-                type="button"
-                className="sticker sticker-press h-12 w-full rounded-xl bg-sky font-display text-xl tracking-wide text-white hover:bg-sky"
-              >
-                <a href="/api/auth/linkedin/start">
-                  <BriefcaseBusiness className="mr-2 h-5 w-5" />
-                  Continue with LinkedIn
-                </a>
-              </Button>
-              <p className="mt-3 text-xs leading-relaxed text-olive">
-                Confirms your email and name in one step, so there&apos;s no code
-                to wait for. You&apos;ll still paste your profile — LinkedIn
-                doesn&apos;t let apps read it.
-              </p>
-            </>
-          )}
         </form>
       )}
 
