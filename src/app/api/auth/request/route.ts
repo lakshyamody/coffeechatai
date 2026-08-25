@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { createChallenge, isEmail } from "@/lib/auth";
-import { sendEmail, verificationEmail, emailConfigured } from "@/lib/email";
+import {
+  emailConfigured,
+  explainDeliveryError,
+  sendEmail,
+  verificationEmail,
+} from "@/lib/email";
 import { getProfileByEmail } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -25,19 +30,9 @@ export async function POST(request: Request) {
   // A code nobody can read is a dead end. Say so here rather than leaving
   // someone staring at an empty inbox and an code box.
   if (sent.error) {
-    // Some providers refuse recipients outside a verified domain. Worth
-    // naming precisely, because the fix is configuration rather than retrying.
-    const restricted = /only send testing emails|verify a domain|not verified/i.test(
-      sent.error,
-    );
+    const problem = explainDeliveryError(sent.error);
     return NextResponse.json(
-      {
-        error: restricted
-          ? "We can't email this address yet. The sending domain isn't verified, so mail only reaches the provider account owner."
-          : "We couldn't send that email.",
-        detail: sent.error,
-        restricted,
-      },
+      { error: problem.message, detail: sent.error, restricted: problem.blocked },
       { status: 502 },
     );
   }

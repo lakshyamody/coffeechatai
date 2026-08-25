@@ -270,8 +270,9 @@ export function LoginFlow({
               </p>
               <p className="mt-1 text-sm leading-relaxed text-bark">{mailBlocked}</p>
               <p className="mt-2 text-xs leading-relaxed text-olive">
-                The mail provider rejected this recipient. Check the sending
-                domain is verified for the configured inbox.
+                This is a limit on our side, not on yours. Try an address
+                that&apos;s already received mail from us, or come back once the
+                cap lifts.
               </p>
             </div>
           )}

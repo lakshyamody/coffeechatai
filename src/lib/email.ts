@@ -16,6 +16,49 @@ import { T, exec, query } from "./db";
 
 export type Transport = "agentmail" | "outbox";
 
+export interface DeliveryProblem {
+  /** Safe to show a visitor. */
+  message: string;
+  /** True when waiting or configuration fixes it, rather than retrying. */
+  blocked: boolean;
+}
+
+/**
+ * Turn a provider error into something a person can act on.
+ *
+ * These were all collapsing into "We couldn't send that email", which sends
+ * someone off to check their spam folder for a message that was never
+ * accepted. The two that actually happen are worth naming exactly.
+ */
+export function explainDeliveryError(raw: string): DeliveryProblem {
+  const limit = /recipient limit|rate_limit_exceeded/i.test(raw);
+  if (limit) {
+    const lifts = raw.match(/lifts at ([0-9T:.\-]+Z)/)?.[1];
+    const when = lifts
+      ? new Date(lifts).toLocaleString("en-GB", {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : null;
+    return {
+      blocked: true,
+      message: `Our mail account is new, and the provider caps how many different people it can write to for the first few days${
+        when ? ` — the cap lifts on ${when}` : ""
+      }. Nothing's wrong with your address.`,
+    };
+  }
+  if (/only send testing emails|verify a domain|not verified/i.test(raw)) {
+    return {
+      blocked: true,
+      message:
+        "We can't email this address yet. The sending domain isn't verified, so mail only reaches the provider account owner.",
+    };
+  }
+  return { blocked: false, message: "We couldn't send that email. Try again in a moment." };
+}
+
 export interface OutboundEmail {
   id: string;
   to: string;
