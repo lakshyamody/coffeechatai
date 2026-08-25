@@ -1,27 +1,20 @@
-import { Resend } from "resend";
 import { ROUND_LABELS, sendsAt } from "./schedule";
 import { T, exec, query } from "./db";
 
 /**
  * Email delivery.
  *
- * Three transports, first configured wins:
- *
  *   agentmail — sends from an AgentMail inbox on their own verified domain,
- *               so mail reaches any recipient. Preferred.
- *   resend    — works with no domain setup, but the shared sender only
- *               delivers to the Resend account owner until you verify a
- *               domain of your own. Fine for testing, useless for a real
- *               pool.
- *   outbox    — the fallback. Records the message and nothing leaves the
- *               machine, so signup, verification, and match notifications
- *               are all exercisable with no credentials at all.
+ *               so mail reaches any recipient.
+ *   outbox    — the fallback when no key is set. Records the message and
+ *               nothing leaves the machine, so signup, verification, and
+ *               match notifications stay exercisable with no credentials.
  *
  * The outbox is not a stub of a missing feature; it is what makes the flow
  * demonstrable. /outbox renders whatever it holds, whichever transport ran.
  */
 
-export type Transport = "agentmail" | "resend" | "outbox";
+export type Transport = "agentmail" | "outbox";
 
 export interface OutboundEmail {
   id: string;
@@ -70,9 +63,7 @@ const AGENTMAIL_INBOX =
   process.env.AGENTMAIL_INBOX_ID ?? "agency-leads@agentmail.to";
 
 export function activeTransport(): Transport {
-  if (process.env.AGENTMAIL_API_KEY) return "agentmail";
-  if (process.env.RESEND_API_KEY) return "resend";
-  return "outbox";
+  return process.env.AGENTMAIL_API_KEY ? "agentmail" : "outbox";
 }
 
 export function emailConfigured(): boolean {
@@ -84,19 +75,10 @@ export function transportLabel(): string {
   switch (activeTransport()) {
     case "agentmail":
       return `AgentMail (${AGENTMAIL_INBOX})`;
-    case "resend":
-      return `Resend (${FROM})`;
     default:
       return "Not configured — captured locally";
   }
 }
-
-/**
- * Resend's shared sender works with no domain setup, but only delivers to the
- * address that owns the Resend account. Set BREWED_FROM to a verified domain
- * to reach anyone else.
- */
-const FROM = process.env.BREWED_FROM ?? "Brewed <onboarding@resend.dev>";
 
 async function viaAgentMail(msg: {
   to: string;
@@ -127,23 +109,6 @@ async function viaAgentMail(msg: {
   return undefined;
 }
 
-async function viaResend(msg: {
-  to: string;
-  subject: string;
-  html: string;
-  text: string;
-}): Promise<string | undefined> {
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  const { error } = await resend.emails.send({
-    from: FROM,
-    to: msg.to,
-    subject: msg.subject,
-    html: msg.html,
-    text: msg.text,
-  });
-  return error?.message;
-}
-
 export async function sendEmail(msg: {
   to: string;
   subject: string;
@@ -163,7 +128,6 @@ export async function sendEmail(msg: {
 
   try {
     if (transport === "agentmail") record.error = await viaAgentMail(msg);
-    else if (transport === "resend") record.error = await viaResend(msg);
   } catch (err) {
     record.error = err instanceof Error ? err.message : String(err);
   }

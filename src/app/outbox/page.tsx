@@ -10,9 +10,9 @@ export const metadata = { title: "Outbox | Brewed" };
 /**
  * Every message the app has produced this run.
  *
- * With RESEND_API_KEY set these were really delivered and this is a log;
- * without it nothing left the machine and this is the only place to read
- * them — which is what makes the whole email flow demoable with no setup.
+ * With a mail provider configured these were really delivered and this is
+ * the log; without one nothing left the machine and this is the only place to
+ * read them — which is what makes the whole email flow demoable with no setup.
  */
 export default async function OutboxPage() {
   const messages = await outbox();

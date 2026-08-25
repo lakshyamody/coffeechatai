@@ -146,16 +146,18 @@ Four emails: the verification code, a welcome note carrying the extracted
 summary, the Wednesday match (with **the other person's address**, so the two
 of them can arrange it directly), and a feedback request.
 
-Three transports, first configured wins:
-
 | | |
 | --- | --- |
-| **AgentMail** | `AGENTMAIL_API_KEY`. Sends from an AgentMail inbox on their own verified domain, so mail reaches **any** recipient. This is the one to use for a real pool. |
-| **Resend** | `RESEND_API_KEY`. Needs no domain setup, but the shared sender only delivers to the Resend account owner until you verify a domain of your own — so members other than you never receive their code. |
-| **Outbox** | Neither key set. Nothing leaves the machine; every message is recorded and rendered at **`/outbox`**, which is what makes the whole email flow demoable with no credentials. |
+| **AgentMail** | `AGENTMAIL_API_KEY`. Sends from an AgentMail inbox on their own verified domain, so mail reaches **any** recipient. |
+| **Outbox** | No key set. Nothing leaves the machine; every message is recorded and rendered at **`/outbox`**, which is what makes the whole email flow demoable with no credentials. |
 
-Whichever runs, `/outbox` is the log, and the transport that carried each
-message is shown against it.
+Either way `/outbox` is the log, and the transport that carried each message is
+shown against it.
+
+Resend was used earlier and has been removed: its shared sender only delivers
+to the Resend account owner, so every member except the account holder would
+request a sign-in code and silently never receive one. A provider that works
+for one address is worse than none, because the failure is invisible.
 
 ## Layout
 

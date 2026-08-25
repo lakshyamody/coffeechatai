@@ -259,10 +259,8 @@ export function LoginFlow({ initialEmail = "" }: { initialEmail?: string }) {
               </p>
               <p className="mt-1 text-sm leading-relaxed text-bark">{mailBlocked}</p>
               <p className="mt-2 text-xs leading-relaxed text-olive">
-                Verify a domain at resend.com/domains and set{" "}
-                <code className="rounded bg-sand px-1">BREWED_FROM</code> to an
-                address on it. Until then only the Resend account owner can receive
-                a code.
+                The mail provider rejected this recipient. Check the sending
+                domain is verified for the configured inbox.
               </p>
             </div>
           )}

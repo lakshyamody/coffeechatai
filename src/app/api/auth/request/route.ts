@@ -25,9 +25,11 @@ export async function POST(request: Request) {
   // A code nobody can read is a dead end. Say so here rather than leaving
   // someone staring at an empty inbox and an code box.
   if (sent.error) {
-    // Resend's shared sender refuses anyone but the account owner. Worth
+    // Some providers refuse recipients outside a verified domain. Worth
     // naming precisely, because the fix is configuration rather than retrying.
-    const restricted = /only send testing emails|verify a domain/i.test(sent.error);
+    const restricted = /only send testing emails|verify a domain|not verified/i.test(
+      sent.error,
+    );
     return NextResponse.json(
       {
         error: restricted
@@ -49,7 +51,7 @@ export async function POST(request: Request) {
     deliveryError: sent.error ?? null,
     /**
      * With no mail provider configured the code can't reach an inbox, so it
-     * comes back here instead. Never exposed once Resend is wired up.
+     * comes back here instead. Never exposed once a provider is configured.
      */
     devCode: emailConfigured() ? undefined : code,
   });
