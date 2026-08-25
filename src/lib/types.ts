@@ -38,8 +38,11 @@ export interface Profile {
   /** 0 = mostly here to listen, 1 = mostly here to talk */
   talkativeness: number;
 
-  /** 28-bit mask: 7 days x 4 blocks. See availability.ts helpers. */
-  availability: number;
+  /**
+   * Their Calendly (or any booking link). Members schedule with each other
+   * directly through this rather than through a calendar we keep a copy of.
+   */
+  calendlyUrl?: string;
 
   /** Profile ids this member has already been matched with. */
   history: string[];
@@ -170,7 +173,7 @@ export interface ScoreBreakdown {
   resonance: number;
   /** Seniority gap vs. what each side asked for. 0..1 */
   complementarity: number;
-  /** Shared calendar + timezone + format feasibility. 0..1 */
+  /** How easily this chat can actually be scheduled and held. 0..1 */
   logistics: number;
   /** Shared values and workable personality fit. 0..1 */
   character: number;
@@ -197,8 +200,8 @@ export interface Pairing {
   b: string;
   score: ScoreBreakdown;
   reasons: MatchReason[];
-  /** Suggested meeting slot, derived from the availability intersection. */
-  slot: number | null;
+  /** Their booking links, if either side has one. */
+  booking: { a: string | null; b: string | null };
   /** Conversation starters generated from the overlap. */
   starters: string[];
 }

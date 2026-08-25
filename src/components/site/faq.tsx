@@ -11,7 +11,7 @@ import {
 const QUESTIONS = [
   {
     q: "How does the pairing actually work?",
-    a: `${ROUND_LABELS.closesDay} at midnight everyone who's opted in goes into one pool. We score every viable pair on ${SCORE_TERMS.length} things — whether you each have what the other asked for, how much context you share, whether the seniority gap is the one you wanted, whether your calendars overlap, whether your values and personalities fit, and whether you're different enough to learn something. Then we solve for the arrangement that's best across the whole round, not just best for whoever signed up first.`,
+    a: `${ROUND_LABELS.closesDay} at midnight everyone who's opted in goes into one pool. We score every viable pair on ${SCORE_TERMS.length} things — whether you each have what the other asked for, how much context you share, whether the seniority gap is the one you wanted, how easily you could actually meet, whether your values and personalities fit, and whether you're different enough to learn something. Then we solve for the arrangement that's best across the whole round, not just best for whoever signed up first.`,
   },
   {
     q: "How do I sign in?",
@@ -63,7 +63,7 @@ const QUESTIONS = [
   },
   {
     q: "Who can see my answers?",
-    a: "The matcher, and the one person you're matched with each week — and they only see what you chose to put on your offers and asks. There is no browsable directory. Your availability grid is never shown, only the overlap.",
+    a: "The matcher, and the one person you're matched with each week — and they only see what you chose to put on your offers and asks. There is no browsable directory. We never hold your calendar — you share a booking link if you want one, and your match books through it.",
   },
 ];
 

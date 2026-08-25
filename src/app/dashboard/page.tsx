@@ -9,7 +9,6 @@ import { closesAt, roundPhase, sendsAt, zoneAbbreviation } from "@/lib/schedule"
 import { Countdown } from "@/components/site/countdown";
 import { pairingFor } from "@/lib/matching";
 import { explain, starters } from "@/lib/scoring";
-import { popcount } from "@/lib/availability";
 import { cityByName } from "@/lib/cities";
 import type { Profile } from "@/lib/types";
 
@@ -24,7 +23,7 @@ const toReveal = (p: Profile): RevealPerson => ({
   headline: p.headline,
   city: p.city,
   avatarSeed: p.avatarSeed,
-  availability: p.availability,
+  calendlyUrl: p.calendlyUrl ?? null,
   format: p.format,
 });
 
@@ -112,7 +111,6 @@ export default async function DashboardPage() {
 
   // --- Enrolled but unmatched: say why, honestly ---
   if (!pairing) {
-    const blocks = popcount(me.availability);
     const cityWeight = cityByName(me.city)?.weight ?? 0;
     const poolSize = await profileCount();
     const hardNoes = me.structured?.dealBreakers.length ?? 0;
@@ -132,9 +130,9 @@ export default async function DashboardPage() {
           `You're in-person only, so we can only look at people in ${me.city}. There aren't enough of them yet.`,
         );
       }
-      if (blocks < 6) {
+      if (!me.calendlyUrl) {
         causes.push(
-          `You marked ${blocks} free block${blocks === 1 ? "" : "s"}. Every extra block widens who you can actually meet.`,
+          "You haven't added a booking link. It isn't required, but a chat someone can book in one click is far likelier to happen than one that needs a scheduling thread.",
         );
       }
       if (hardNoes >= 3) {
@@ -210,7 +208,7 @@ export default async function DashboardPage() {
         score={pairing.score}
         reasons={oriented.reasons}
         starters={oriented.starters}
-        slot={pairing.slot}
+        booking={pairing.booking}
         roundNumber={roundNumber}
       />
     </Shell>

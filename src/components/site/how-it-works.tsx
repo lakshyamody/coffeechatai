@@ -39,7 +39,7 @@ const STEPS = [
     n: "04",
     title: "Have the chat, then tell us how it went",
     body:
-      "We already know when you're both free, so scheduling is one reply. Afterwards, rate it — that's what retunes your own matching for next week.",
+      "Their booking link is in the email, so it's one click into their real calendar. Afterwards, rate it — that's what retunes your own matching for next week.",
     art: <AvailabilityPreview />,
   },
 ];

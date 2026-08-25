@@ -1,5 +1,4 @@
 import { Avatar } from "@/components/brand";
-import { BLOCKS, DAYS } from "@/lib/availability";
 
 /** Step 1 — what signup actually is now. */
 export function TagCloudPreview() {
@@ -90,55 +89,34 @@ export function MatchCardPreview() {
   );
 }
 
-/** Step 4 — the shared calendar. */
+/** Step 4 — booking through their own link. */
 export function AvailabilityPreview() {
-  const yours = new Set([1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 21]);
-  const theirs = new Set([2, 6, 7, 10, 11, 14, 15, 18, 22]);
   return (
     <div className="sticker-lg w-full max-w-sm rounded-2xl p-5">
-      <p className="font-display text-lg tracking-wide text-ink">When you overlap</p>
-      <div className="mt-3 grid grid-cols-[auto_repeat(7,1fr)] gap-1">
-        <div />
-        {DAYS.map((d) => (
-          <div key={d} className="text-center text-[0.6rem] font-bold text-olive">
-            {d[0]}
-          </div>
-        ))}
-        {BLOCKS.map((block) => (
-          <div key={block.id} className="contents">
-            <div className="pr-1 text-right text-[0.6rem] font-bold text-olive">
-              {block.label}
-            </div>
-            {DAYS.map((d, dayIdx) => {
-              const slot = dayIdx * BLOCKS.length + block.id;
-              const both = yours.has(slot) && theirs.has(slot);
-              const one = yours.has(slot) || theirs.has(slot);
-              return (
-                <div
-                  key={`${d}-${block.id}`}
-                  className={`aspect-square rounded-[3px] border ${
-                    both
-                      ? "border-ink bg-matcha"
-                      : one
-                        ? "border-sand bg-primary/45"
-                        : "border-sand bg-cream"
-                  }`}
-                />
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      <div className="mt-4 flex items-center gap-3 border-t-2 border-dashed border-sand pt-3">
-        <div className="flex -space-x-2">
-          <Avatar name="You" seed={4} className="h-7 w-7 text-[0.55rem]" />
-          <Avatar name="Them" seed={1} className="h-7 w-7 text-[0.55rem]" />
+      <p className="font-display text-lg tracking-wide text-ink">Pick a time</p>
+      <p className="mt-1 text-xs leading-relaxed text-olive">
+        Their booking link, straight into their real calendar.
+      </p>
+
+      <div className="mt-4 flex items-center gap-3 rounded-xl border-2 border-ink bg-cream p-3">
+        <Avatar name="Priya Rao" seed={1} className="h-9 w-9 text-xs" />
+        <div className="min-w-0">
+          <p className="text-sm font-bold leading-tight text-ink">Priya Rao</p>
+          <p className="truncate text-[0.7rem] text-olive">calendly.com/priya/30min</p>
         </div>
-        <p className="text-xs font-semibold text-bark">
-          <span className="rounded bg-matcha/25 px-1">4 blocks</span> you&apos;re
-          both free
-        </p>
+        <span className="ml-auto rounded-full border border-olive/40 px-1.5 py-0.5 text-[0.55rem] font-bold uppercase tracking-wider text-olive">
+          example
+        </span>
       </div>
+
+      <div className="sticker mt-3 grid place-items-center rounded-lg bg-primary py-2.5 text-sm font-bold text-ink">
+        Book 30 minutes
+      </div>
+
+      <p className="mt-4 border-t-2 border-dashed border-sand pt-3 text-xs leading-relaxed text-olive">
+        We never hold a copy of your calendar. Nothing for you to keep in sync,
+        and nothing of yours for us to get wrong.
+      </p>
     </div>
   );
 }

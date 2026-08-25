@@ -12,7 +12,7 @@ import {
   upsertProfile,
 } from "@/lib/store";
 import { rankAgainstPool } from "@/lib/matching";
-import { DEFAULT_AVAILABILITY, popcount } from "@/lib/availability";
+import { normaliseBookingUrl } from "@/lib/booking";
 import { extractProfile } from "@/lib/extractor";
 import { sendEmail, welcomeEmail } from "@/lib/email";
 import { cityByName } from "@/lib/cities";
@@ -33,7 +33,7 @@ interface Draft {
   linkedinText?: string;
   wantToMeet?: string;
   /** Optional refinements; sensible defaults are used when absent. */
-  availability?: number;
+  calendlyUrl?: string;
   format?: string;
   city?: string;
 }
@@ -96,10 +96,8 @@ export async function POST(request: Request) {
 
   const existing = sessionProfile ?? (await getProfileByEmail(email));
   const city = text(draft.city, 80) || fields.city || existing?.city || "Remote";
-  const availability =
-    Number.isInteger(draft.availability) && popcount(draft.availability!) >= 3
-      ? draft.availability!
-      : (existing?.availability ?? DEFAULT_AVAILABILITY);
+  const calendlyUrl =
+    normaliseBookingUrl(text(draft.calendlyUrl ?? "", 300)) ?? existing?.calendlyUrl;
   const format = FORMATS.includes(draft.format as Format)
     ? (draft.format as Format)
     : (existing?.format ?? "either");
@@ -135,7 +133,7 @@ export async function POST(request: Request) {
     direction: fields.direction as Direction,
     concreteness: fields.concreteness,
     talkativeness: fields.talkativeness,
-    availability,
+    calendlyUrl,
     history: existing?.history ?? [],
     blocked: existing?.blocked ?? [],
     optedIn: true,
@@ -175,6 +173,7 @@ export async function POST(request: Request) {
     structured,
     source,
     derived: {
+      calendlyUrl: profile.calendlyUrl ?? null,
       headline: profile.headline,
       city: profile.city,
       offers: profile.offers,

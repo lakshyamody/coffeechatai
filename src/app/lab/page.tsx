@@ -4,7 +4,6 @@ import { RoundControls } from "@/components/app/rerun-button";
 import { Button } from "@/components/ui/button";
 import { allProfiles, currentRound, getRoundNumber } from "@/lib/store";
 import { WEIGHTS } from "@/lib/scoring";
-import { popcount } from "@/lib/availability";
 import { cityByName } from "@/lib/cities";
 import { adminTokenConfigured, isOperator } from "@/lib/admin";
 import { OperatorLocked } from "@/components/app/operator-locked";
@@ -207,14 +206,11 @@ export default async function LabPage({ searchParams }: PageProps<"/lab">) {
               {round.unmatched.map((id) => {
                 const p = byId.get(id);
                 if (!p) return null;
-                const blocks = popcount(p.availability);
                 const weight = cityByName(p.city)?.weight ?? 0;
                 const why =
                   p.format === "in-person" && weight < 5
                     ? `In-person only in ${p.city}, which is quiet this week.`
-                    : blocks < 6
-                      ? `Only ${blocks} free block${blocks === 1 ? "" : "s"} marked.`
-                      : "Odd pool — fewest viable partners, so held over.";
+                    : "Odd pool — fewest viable partners, so held over.";
                 return (
                   <div key={id} className="sticker flex items-center gap-3 rounded-xl p-3.5">
                     <Avatar name={p.name} seed={p.avatarSeed} className="h-9 w-9 text-xs" />

@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   CalendarCheck,
-  Check,
   Copy,
+  ExternalLink,
   Mail,
   MapPin,
   MessageSquareQuote,
@@ -15,13 +15,11 @@ import {
 import { toast } from "sonner";
 
 import { Avatar, Eyebrow } from "@/components/brand";
-import { OverlapGrid } from "@/components/app/overlap-grid";
 import { FeedbackCard } from "@/components/app/feedback-card";
 import { Button } from "@/components/ui/button";
-import { listSlots, slotLabel } from "@/lib/availability";
+import { bookingHostLabel } from "@/lib/booking";
 import { WEIGHTS } from "@/lib/scoring";
 import type { MatchReason, ScoreBreakdown } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { ROUND_LABELS } from "@/lib/schedule";
 
 export interface RevealPerson {
@@ -31,7 +29,7 @@ export interface RevealPerson {
   headline: string;
   city: string;
   avatarSeed: number;
-  availability: number;
+  calendlyUrl: string | null;
   format: string;
   /** One-line read from the structured profile, when it exists. */
   summary?: string;
@@ -51,7 +49,7 @@ export function MatchReveal({
   score,
   reasons,
   starters,
-  slot,
+  booking,
   roundNumber,
 }: {
   me: RevealPerson;
@@ -59,13 +57,12 @@ export function MatchReveal({
   score: ScoreBreakdown;
   reasons: MatchReason[];
   starters: string[];
-  slot: number | null;
+  booking: { a: string | null; b: string | null };
   roundNumber: number;
 }) {
   const router = useRouter();
-  const shared = listSlots(me.availability & them.availability);
-  const [chosen, setChosen] = useState<number | null>(slot);
-  const [confirmed, setConfirmed] = useState(false);
+  const theirBooking = them.calendlyUrl ?? booking.b ?? null;
+  const myBooking = me.calendlyUrl ?? booking.a ?? null;
   const [busy, setBusy] = useState(false);
 
   const inPerson =
@@ -177,9 +174,7 @@ export function MatchReveal({
               href={`mailto:${them.email}?subject=${encodeURIComponent(
                 "Coffee chat this week?",
               )}&body=${encodeURIComponent(
-                `Hi ${them.name.split(" ")[0]} — Brewed matched us this week.${
-                  chosen !== null ? ` It says we're both free ${slotLabel(chosen)}; does that work?` : ""
-                }\n\n`,
+                `Hi ${them.name.split(" ")[0]} — Brewed matched us this week.\n\n`,
               )}`}
             >
               <Mail className="mr-1.5 h-4 w-4" />
@@ -239,53 +234,62 @@ export function MatchReveal({
         </div>
       </section>
 
-      {/* scheduling */}
+      {/* scheduling — through their own booking link, not a calendar we keep */}
       <section className="mt-8">
         <h3 className="font-display text-3xl leading-none text-ink">Pick a time</h3>
         <p className="mt-1 text-sm text-bark">
-          Green is when you&apos;re both free. They see the same thing.
+          {theirBooking
+            ? `${them.name.split(" ")[0]} takes bookings — grab a slot that suits you.`
+            : `${them.name.split(" ")[0]} hasn't added a booking link, so agree a time by email.`}
         </p>
         <div className="sticker mt-4 rounded-xl p-5">
-          <OverlapGrid mine={me.availability} theirs={them.availability} highlight={chosen} />
-          <div className="mt-5 flex flex-wrap gap-2">
-            {shared.slice(0, 8).map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => {
-                  setChosen(s);
-                  setConfirmed(false);
-                }}
-                className={cn(
-                  "rounded-lg border-2 border-ink px-3 py-1.5 text-xs font-bold shadow-[2px_2px_0_0_var(--color-ink)] transition-all",
-                  chosen === s ? "bg-matcha text-white" : "bg-white text-bark hover:-translate-y-0.5",
-                )}
+          {theirBooking ? (
+            <>
+              <Button
+                asChild
+                className="sticker sticker-press h-12 w-full rounded-lg bg-primary font-display text-xl tracking-wide text-ink hover:bg-primary"
               >
-                {slotLabel(s)}
-              </button>
-            ))}
-          </div>
-          <Button
-            type="button"
-            disabled={chosen === null || confirmed}
-            onClick={() => {
-              setConfirmed(true);
-              toast.success(
-                `Locked in for ${slotLabel(chosen!)}. We'll text you both a reminder.`,
-              );
-            }}
-            className="sticker sticker-press mt-5 h-11 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-ink hover:bg-primary disabled:opacity-50"
-          >
-            {confirmed ? (
+                <a href={theirBooking} target="_blank" rel="noopener noreferrer">
+                  <CalendarCheck className="mr-2 h-5 w-5" />
+                  Book with {them.name.split(" ")[0]}
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+              <p className="mt-2 text-center text-xs text-olive">
+                {bookingHostLabel(theirBooking)}
+              </p>
+            </>
+          ) : (
+            <Button
+              asChild
+              className="sticker sticker-press h-12 w-full rounded-lg bg-primary font-display text-xl tracking-wide text-ink hover:bg-primary"
+            >
+              <a href={`mailto:${them.email}?subject=${encodeURIComponent("Coffee chat this week?")}`}>
+                <Mail className="mr-2 h-5 w-5" />
+                Suggest a time by email
+              </a>
+            </Button>
+          )}
+
+          <p className="mt-4 border-t-2 border-dashed border-sand pt-3 text-xs leading-relaxed text-olive">
+            {myBooking ? (
               <>
-                <Check className="mr-1.5 h-4 w-4" strokeWidth={3} /> Confirmed
+                They can book you back at{" "}
+                <span className="font-semibold text-bark">
+                  {bookingHostLabel(myBooking)}
+                </span>
+                .
               </>
             ) : (
               <>
-                <CalendarCheck className="mr-1.5 h-4 w-4" /> Lock in this time
+                You haven&apos;t added a booking link.{" "}
+                <Link href="/join" className="font-semibold text-roast underline">
+                  Add one
+                </Link>{" "}
+                and people can book you in a click instead of trading emails.
               </>
             )}
-          </Button>
+          </p>
         </div>
       </section>
 

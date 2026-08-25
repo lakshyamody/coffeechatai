@@ -1,6 +1,5 @@
 import type { Pairing, Profile, RoundResult, ScoreBreakdown } from "./types";
 import {
-  bestSlot,
   canMeet,
   dealBreakerBetween,
   explain,
@@ -8,7 +7,6 @@ import {
   starters,
 } from "./scoring";
 import { personalTotal } from "./preferences";
-import { popcount } from "./availability";
 import {
   countBlockingPairs,
   greedyMaxWeight,
@@ -35,8 +33,8 @@ const pairKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
  * Stage 1 — candidate generation.
  *
  * Cheap structural filters only: identity, blocks, history, deal-breakers,
- * whether they can physically meet, and whether their calendars touch at
- * all. Everything that survives is worth paying for a full score.
+ * and whether they can physically meet. Everything that survives is worth
+ * paying for a full score.
  *
  * At 64 people this is a rounding error, but it's the stage that keeps the
  * round tractable as the pool grows — full scoring is far more expensive
@@ -51,7 +49,6 @@ export function generateCandidates(pool: Profile[]): Array<[Profile, Profile]> {
       if (a.blocked.includes(b.id) || b.blocked.includes(a.id)) continue;
       if (a.history.includes(b.id) || b.history.includes(a.id)) continue;
       if (!canMeet(a, b)) continue;
-      if (popcount(a.availability & b.availability) === 0) continue;
       if (dealBreakerBetween(a, b)) continue;
       candidates.push([a, b]);
     }
@@ -320,7 +317,7 @@ export function runRound(profiles: Profile[]): RoundResult {
       b,
       score: breakdown,
       reasons: explain(pa, pb, breakdown, "neutral"),
-      slot: bestSlot(pa, pb),
+      booking: { a: pa.calendlyUrl ?? null, b: pb.calendlyUrl ?? null },
       starters: starters(pa, pb),
     });
   }

@@ -1,7 +1,6 @@
 import type { RoundResult } from "./types";
 import { allProfiles, getProfile } from "./store";
 import { explain } from "./scoring";
-import { slotLabel } from "./availability";
 import { matchEmail, sendEmail } from "./email";
 
 /**
@@ -42,7 +41,7 @@ export async function sendRoundEmails(
             label: r.label,
             detail: r.detail,
           })),
-          slot: pairing.slot !== null ? slotLabel(pairing.slot) : null,
+          bookingUrl: me === a ? pairing.booking.b : pairing.booking.a,
           inPerson,
           dashboardUrl: `${origin}/dashboard`,
         }),

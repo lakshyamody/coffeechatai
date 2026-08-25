@@ -85,7 +85,7 @@ calendars intersect at all. Roughly a third of pairs die here.
 | Reciprocity | 30% | `offers(A) ∩ seeks(B)` and the reverse, via a softened **harmonic mean** so a lopsided pairing can't score well on one side alone |
 | Resonance | 20% | **IDF-weighted cosine** over topics and goals — "quantum" counts far more than "LLM products" |
 | Complementarity | 14% | Seniority gap vs. what each side asked for, plus talker/listener balance |
-| Logistics | 14% | Popcount of two 28-bit availability masks, timezone decay, format feasibility |
+| Logistics | 14% | Timezone distance, format feasibility, and whether either side has a booking link |
 | Character | 14% | Values overlap and personality fit, from the structured representation |
 | Serendipity | 8% | `4j(1−j)` over topic Jaccard — peaks at 50% overlap |
 

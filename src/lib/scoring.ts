@@ -7,7 +7,7 @@ import type {
   ScoreTerm,
 } from "./types";
 import { TOPIC_TAGS, tagById, tagLabel, topicById } from "./taxonomy";
-import { listSlots, popcount, slotLabel } from "./availability";
+
 
 /**
  * Pair scoring.
@@ -151,14 +151,21 @@ export function canMeet(a: Profile, b: Profile): boolean {
 }
 
 export function logistics(a: Profile, b: Profile): number {
-  const shared = popcount(a.availability & b.availability);
-  if (shared === 0) return 0;
-  const calendar = Math.min(shared / 6, 1); // saturates at 6 shared blocks
+  // We no longer keep a copy of anyone's calendar — people book each other
+  // through their own booking link. What's left that genuinely predicts
+  // whether a chat happens is whether the clock is against them, whether the
+  // format works, and whether booking is one click or an email thread.
   const sameCity = a.city === b.city;
   const tzGap = Math.abs(a.utcOffset - b.utcOffset);
-  const tz = sameCity ? 1 : Math.exp(-(tzGap * tzGap) / 50);
-  const inPersonBonus = sameCity && a.format !== "virtual" && b.format !== "virtual" ? 0.1 : 0;
-  return Math.min(1, 0.55 * calendar + 0.45 * tz + inPersonBonus);
+  const timezone = sameCity ? 1 : Math.exp(-(tzGap * tzGap) / 50);
+
+  const format =
+    sameCity && a.format !== "virtual" && b.format !== "virtual" ? 1 : 0.85;
+
+  const links = [a.calendlyUrl, b.calendlyUrl].filter(Boolean).length;
+  const booking = links === 2 ? 1 : links === 1 ? 0.7 : 0.4;
+
+  return Math.min(1, 0.5 * timezone + 0.2 * format + 0.3 * booking);
 }
 
 export function serendipity(a: Profile, b: Profile): number {
@@ -278,23 +285,7 @@ export function scorePair(a: Profile, b: Profile): ScoreBreakdown | null {
     serendipity: serendipity(a, b),
   };
 
-  // No shared time at all means no chat, whatever else lines up.
-  if (parts.logistics === 0) return null;
-
   return { ...parts, total: blend(parts, WEIGHTS) };
-}
-
-/** The best mutually-free block, used to pre-fill the scheduler. */
-export function bestSlot(a: Profile, b: Profile): number | null {
-  const shared = listSlots(a.availability & b.availability);
-  if (shared.length === 0) return null;
-  // Prefer midday/afternoon on weekdays — that's when a coffee chat belongs.
-  const rank = (s: number) => {
-    const day = Math.floor(s / 4);
-    const block = s % 4;
-    return (day < 5 ? 0 : 2) + (block === 1 || block === 2 ? 0 : 1);
-  };
-  return shared.sort((x, y) => rank(x) - rank(y) || x - y)[0];
 }
 
 /**
@@ -396,16 +387,23 @@ export function explain(
     });
   }
 
-  const shared = popcount(a.availability & b.availability);
-  if (shared > 0 && fired("logistics", 0.3)) {
-    const slot = bestSlot(a, b);
+  if (fired("logistics", 0.55)) {
+    const bothBook = Boolean(a.calendlyUrl && b.calendlyUrl);
+    const tzGap = Math.abs(a.utcOffset - b.utcOffset);
     reasons.push({
       kind: "logistics",
       label:
         a.city === b.city
           ? `${second ? "You're both" : "Both"} in ${a.city}`
-          : `${second ? "Your calendars" : "Calendars"} line up`,
-      detail: `${shared} overlapping block${shared === 1 ? "" : "s"} this week${slot !== null ? `, starting ${slotLabel(slot)}` : ""}.`,
+          : bothBook
+            ? "Easy to book"
+            : "Workable hours",
+      detail:
+        a.city === b.city
+          ? `Same city, so this can be a real cafe if ${second ? "you" : "they"} want it.`
+          : bothBook
+            ? `${tzGap === 0 ? "Same timezone" : `${tzGap} hours apart`}, and you both have a booking link — one click, no scheduling thread.`
+            : `${tzGap === 0 ? "Same timezone" : `Only ${tzGap} hours apart`}, so finding an hour is straightforward.`,
     });
   }
 
@@ -420,13 +418,10 @@ export function explain(
   // A weak pair should read as a weak pair rather than borrowing the
   // language of a strong one.
   if (reasons.length === 0) {
-    const slot = bestSlot(a, b);
     reasons.push({
       kind: "logistics",
       label: "A thin week in the pool",
-      detail: `Nothing lined up strongly, so we went with the best of what was left${
-        slot !== null ? ` — ${second ? "you're both" : "both"} free ${slotLabel(slot)}` : ""
-      }. ${second ? "Widen your answers and next round" : "A wider set of answers"} has more to work with.`,
+      detail: `Nothing lined up strongly, so we went with the best of what was left. ${second ? "Rewrite your answer and next round" : "A different answer"} has more to work with.`,
     });
   }
 

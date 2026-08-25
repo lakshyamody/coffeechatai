@@ -225,7 +225,7 @@ export function matchEmail(opts: {
   matchCity: string;
   score: number;
   reasons: Array<{ label: string; detail: string }>;
-  slot: string | null;
+  bookingUrl: string | null;
   inPerson: boolean;
   dashboardUrl: string;
 }) {
@@ -252,21 +252,25 @@ export function matchEmail(opts: {
        </div>` +
         `<div style="font-weight:800;font-size:15px;margin:0 0 10px">Why you two &middot; ${Math.round(opts.score)}/100</div>` +
         reasonHtml +
-        (opts.slot
+        (opts.bookingUrl
           ? p(
-              `<strong>You're both free ${opts.slot}.</strong> Whoever writes first, pick that.`,
+              `<strong>They take bookings.</strong> Pick a time that suits you — no scheduling thread needed.`,
             )
           : "") +
         `<div style="margin-top:20px">
-           <a href="mailto:${opts.matchEmail}?subject=${encodeURIComponent(
+           ${
+             opts.bookingUrl
+               ? `<a href="${opts.bookingUrl}" style="display:inline-block;background:#ffcd2a;color:${INK};border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Book a time with ${opts.matchName.split(" ")[0]}</a> `
+               : ""
+           }<a href="mailto:${opts.matchEmail}?subject=${encodeURIComponent(
              "Coffee chat this week?",
-           )}" style="display:inline-block;background:#ffcd2a;color:${INK};border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Email ${opts.matchName.split(" ")[0]}</a>
+           )}" style="display:inline-block;background:${opts.bookingUrl ? "#fff" : "#ffcd2a"};color:${INK};border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Email ${opts.matchName.split(" ")[0]}</a>
            <a href="${opts.dashboardUrl}" style="display:inline-block;margin-left:8px;color:${OLIVE};font-size:14px;text-decoration:underline;padding:11px 0">See the full match</a>
          </div>`,
     ),
-    text: `Your coffee chat this week: ${opts.matchName} (${opts.matchHeadline}) — ${opts.matchEmail}. ${
-      opts.slot ? `You're both free ${opts.slot}. ` : ""
-    }Full match: ${opts.dashboardUrl}`,
+    text: `Your coffee chat this week: ${opts.matchName} (${opts.matchHeadline}) — ${opts.matchEmail}.${
+      opts.bookingUrl ? ` Book a time: ${opts.bookingUrl}.` : ""
+    } Full match: ${opts.dashboardUrl}`,
   };
 }
 

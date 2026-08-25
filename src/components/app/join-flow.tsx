@@ -15,13 +15,12 @@ import {
 import { toast } from "sonner";
 
 import { Avatar, Logo } from "@/components/brand";
-import { AvailabilityGrid } from "@/components/app/availability-grid";
 import { TagGrid } from "@/components/app/tag-grid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DEFAULT_AVAILABILITY } from "@/lib/availability";
+import { SUPPORTED_BOOKING_HOSTS } from "@/lib/booking";
 import { tagLabel } from "@/lib/taxonomy";
 import { DEAL_BREAKERS, type StructuredProfile } from "@/lib/types";
 import { sendsAt } from "@/lib/schedule";
@@ -69,7 +68,7 @@ export function JoinFlow({
   const [showMore, setShowMore] = useState(false);
   const [city, setCity] = useState("");
   const [format, setFormat] = useState("either");
-  const [availability, setAvailability] = useState(DEFAULT_AVAILABILITY);
+  const [calendlyUrl, setCalendlyUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{
     structured: StructuredProfile;
@@ -93,7 +92,7 @@ export function JoinFlow({
           wantToMeet,
           city: city || undefined,
           format,
-          availability,
+          calendlyUrl,
         }),
       });
       const data = await res.json();
@@ -387,8 +386,8 @@ About: I work on payments reliability — mostly the ledger path and the things 
         className="mt-5 flex w-full items-center justify-between rounded-xl border-2 border-dashed border-sand px-4 py-3 text-left"
       >
         <span className="text-sm font-semibold text-bark">
-          City, format and availability{" "}
-          <span className="font-normal text-olive">— sensible defaults, adjust if you like</span>
+          Booking link, city and format{" "}
+          <span className="font-normal text-olive">— optional, but a link means they can just book you</span>
         </span>
         <ChevronDown
           className={`h-4 w-4 shrink-0 text-olive transition-transform ${showMore ? "rotate-180" : ""}`}
@@ -397,6 +396,22 @@ About: I work on payments reliability — mostly the ledger path and the things 
 
       {showMore && (
         <div className="mt-4 flex flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-xs font-bold uppercase tracking-wider text-olive">
+              Booking link
+            </Label>
+            <Input
+              value={calendlyUrl}
+              onChange={(e) => setCalendlyUrl(e.target.value)}
+              placeholder="calendly.com/yourname/30min"
+              className="sticker h-11 rounded-lg focus-visible:ring-0"
+            />
+            <p className="text-xs leading-relaxed text-olive">
+              Your match books straight into your own calendar — no availability
+              for us to keep, and nothing to keep up to date.{" "}
+              {SUPPORTED_BOOKING_HOSTS.slice(0, 4).join(", ")} and a few others.
+            </p>
+          </div>
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs font-bold uppercase tracking-wider text-olive">
               City
@@ -414,7 +429,6 @@ About: I work on payments reliability — mostly the ledger path and the things 
             onChange={(v) => setFormat(v.find((x) => x !== format) ?? format)}
             columns={3}
           />
-          <AvailabilityGrid value={availability} onChange={setAvailability} />
         </div>
       )}
 

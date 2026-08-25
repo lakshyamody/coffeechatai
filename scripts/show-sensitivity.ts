@@ -10,13 +10,7 @@
 import type { Direction, Format, Profile, Seniority } from "../src/lib/types";
 import { rankAgainstPool } from "../src/lib/matching";
 import { scorePair, dealBreakerBetween } from "../src/lib/scoring";
-import { maskFrom } from "../src/lib/availability";
 
-const WEEKDAY_MIDDAY = maskFrom([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1]]);
-const WEEKDAY_EVENING = maskFrom([[0, 3], [1, 3], [2, 3], [3, 3], [4, 3]]);
-const BROAD = maskFrom([
-  [0, 1], [0, 2], [1, 1], [1, 2], [2, 1], [2, 2], [3, 1], [3, 2], [4, 1], [4, 2],
-]);
 
 let n = 0;
 function person(p: Partial<Profile> & { name: string }): Profile {
@@ -36,9 +30,9 @@ function person(p: Partial<Profile> & { name: string }): Profile {
     seeks: [],
     topics: [],
     direction: "any" as Direction,
+    calendlyUrl: "https://calendly.com/example/30min",
     concreteness: 0.5,
     talkativeness: 0.5,
-    availability: BROAD,
     history: [],
     blocked: [],
     optedIn: true,
@@ -56,37 +50,37 @@ const POOL: Profile[] = [
     name: "Rhea the investor", role: "Partner", company: "Kestrel Capital",
     seniority: 4, goals: ["hire"], offers: ["fundraising", "go-to-market"],
     seeks: ["swap-notes"], topics: ["marketplaces", "consumer"],
-    direction: "junior", availability: WEEKDAY_MIDDAY,
+    direction: "junior",
   }),
   person({
     name: "Sam the staff eng", role: "Staff engineer", company: "Stripe",
     seniority: 3, goals: ["mentor"], offers: ["craft", "referrals"],
     seeks: ["management"], topics: ["infra", "devtools"],
-    direction: "junior", availability: BROAD,
+    direction: "junior",
   }),
   person({
     name: "Priya the peer founder", role: "Co-founder", company: "Muon",
     seniority: 2, goals: ["build"], offers: ["swap-notes", "product-feedback"],
     seeks: ["swap-notes", "cofounder"], topics: ["llm-apps", "marketplaces"],
-    direction: "peer", availability: BROAD,
+    direction: "peer",
   }),
   person({
     name: "Dev the student", role: "CS senior", company: "IIT Delhi",
     seniority: 0, goals: ["learn"], offers: ["swap-notes"],
     seeks: ["career-path", "breaking-in"], topics: ["llm-apps", "devtools"],
-    direction: "senior", availability: BROAD,
+    direction: "senior",
   }),
   person({
     name: "Mei the design lead", role: "Head of Design", company: "Figma",
     seniority: 3, goals: ["mentor"], offers: ["craft", "management"],
     seeks: ["product-feedback"], topics: ["design", "consumer"],
-    direction: "any", availability: BROAD,
+    direction: "any",
   }),
   person({
     name: "Omar in Berlin", role: "Engineering manager", company: "Loop",
     seniority: 3, city: "Berlin", utcOffset: 1, format: "in-person",
     goals: ["hire"], offers: ["management", "hiring"], seeks: ["craft"],
-    topics: ["infra", "product"], direction: "peer", availability: BROAD,
+    topics: ["infra", "product"], direction: "peer",
   }),
 ];
 
@@ -94,7 +88,7 @@ const BASE: Profile = person({
   name: "You", role: "Founder", company: "Brewed", seniority: 2,
   goals: ["build"], offers: ["product-feedback", "cofounder"],
   seeks: ["swap-notes"], topics: ["llm-apps", "marketplaces"],
-  direction: "peer", availability: BROAD,
+  direction: "peer",
 });
 
 function report(label: string, change: Partial<Profile>) {
@@ -129,7 +123,7 @@ report('SEEKS "career paths" instead', { seeks: ["career-path"] });
 report('WANTS SOMEONE AHEAD (direction: senior)', { direction: "senior" });
 report("WANTS SOMEONE EARLIER (direction: junior)", { direction: "junior" });
 report('TOPICS become design + consumer', { topics: ["design", "consumer"] });
-report("ONLY FREE WEEKDAY EVENINGS", { availability: WEEKDAY_EVENING });
+report("NO BOOKING LINK (others have one)", { calendlyUrl: undefined });
 report("IN-PERSON ONLY, IN BERLIN", { city: "Berlin", utcOffset: 1, format: "in-person" });
 report("HARD NO on recruiters", {
   structured: {
