@@ -49,13 +49,6 @@ const FORMAT_OPTIONS = [
   { id: "in-person", label: "In person only", detail: "Only people in my city." },
 ];
 
-const DIRECTION_COPY: Record<string, string> = {
-  senior: "people further along than you",
-  peer: "people at your level",
-  junior: "people earlier than you",
-  any: "no strong preference on seniority",
-};
-
 export function JoinFlow({
   verifiedEmail,
   roundNumber,
@@ -147,28 +140,48 @@ export function JoinFlow({
           </div>
           <p className="mt-2 text-sm leading-relaxed text-ink">{structured.summary}</p>
 
+          {/*
+            Lead with the model's own words. An earlier version showed the
+            taxonomy labels instead — "Can offer: craft, career-path" — which
+            reads the same for everybody and made a genuinely specific
+            extraction look canned. The tags are still shown, but as what the
+            matcher scores on, underneath the prose they came from.
+          */}
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Reads as">
               <p className="text-sm text-bark">{derived.headline}</p>
-              <p className="text-sm text-bark">{derived.city}</p>
+              {derived.city && <p className="text-sm text-bark">{derived.city}</p>}
             </Field>
-            <Field label="Wants to meet">
-              <p className="text-sm text-bark">
-                {DIRECTION_COPY[derived.direction] ?? derived.direction}
+            <Phrases label="What you're bringing" items={structured.lifestyle} />
+            <Phrases label="A good chat looks like" items={structured.connectionGoals} />
+            <Phrases label="Who you'd click with" items={structured.preferences} />
+            <Phrases label="Into" items={structured.interests} />
+            <Phrases label="Values" items={structured.values} />
+          </div>
+
+          {structured.personality && (
+            <div className="mt-4 border-t-2 border-dashed border-sand pt-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-olive">
+                How you come across
               </p>
-            </Field>
-            <TagList title="Can offer" ids={derived.offers} />
-            <TagList title="Looking for" ids={derived.seeks} />
-            <TagList title="Topics" ids={derived.topics} />
-            <Field label="Values">
-              <ul className="flex flex-col gap-0.5">
-                {structured.values.slice(0, 4).map((v) => (
-                  <li key={v} className="text-sm leading-snug text-bark">
-                    &middot; {v}
-                  </li>
-                ))}
-              </ul>
-            </Field>
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <Trait label="Sticks to the known" right="Chases novelty" value={structured.personality.openness} />
+                <Trait label="Reserved" right="Outgoing" value={structured.personality.energy} />
+                <Trait label="Diplomatic" right="Blunt" value={structured.personality.directness} />
+                <Trait label="Improvises" right="Comes with an agenda" value={structured.personality.structure} />
+              </div>
+            </div>
+          )}
+
+          <div className="mt-4 border-t-2 border-dashed border-sand pt-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-olive">
+              What the matcher scores on
+            </p>
+            <div className="mt-2 flex flex-col gap-2">
+              <TagList title="Can offer" ids={derived.offers} />
+              <TagList title="Looking for" ids={derived.seeks} />
+              <TagList title="Topics" ids={derived.topics} />
+            </div>
           </div>
 
           {structured.dealBreakers.length > 0 && (
@@ -440,10 +453,52 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function Phrases({ label, items }: { label: string; items?: string[] }) {
+  if (!items?.length) return null;
+  return (
+    <Field label={label}>
+      <ul className="flex flex-col gap-0.5">
+        {items.slice(0, 4).map((i) => (
+          <li key={i} className="text-sm leading-snug text-bark">
+            &middot; {i}
+          </li>
+        ))}
+      </ul>
+    </Field>
+  );
+}
+
+/** The extractor estimates these; showing them lets someone correct a bad read. */
+function Trait({
+  label,
+  right,
+  value,
+}: {
+  label: string;
+  right: string;
+  value: number;
+}) {
+  return (
+    <div>
+      <div className="h-2 overflow-hidden rounded-full border-2 border-ink bg-cream">
+        <div
+          className="h-full rounded-full bg-roast transition-all"
+          style={{ width: `${Math.round(value * 100)}%` }}
+        />
+      </div>
+      <div className="mt-0.5 flex justify-between text-[0.65rem] leading-tight text-olive">
+        <span>{label}</span>
+        <span>{right}</span>
+      </div>
+    </div>
+  );
+}
+
 function TagList({ title, ids }: { title: string; ids: string[] }) {
   if (!ids?.length) return null;
   return (
-    <Field label={title}>
+    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1.5">
+      <span className="text-xs font-semibold text-olive">{title}:</span>
       <div className="flex flex-wrap gap-1.5">
         {ids.map((id) => (
           <span
@@ -454,7 +509,7 @@ function TagList({ title, ids }: { title: string; ids: string[] }) {
           </span>
         ))}
       </div>
-    </Field>
+    </div>
   );
 }
 
