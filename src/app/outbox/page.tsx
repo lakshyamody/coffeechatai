@@ -92,7 +92,7 @@ export default async function OutboxPage({ searchParams }: PageProps<"/outbox">)
                       m.error
                         ? "bg-berry text-white"
                         : m.transport === "outbox"
-                          ? "bg-primary text-ink"
+                          ? "bg-primary text-primary-foreground"
                           : "bg-matcha text-white"
                     }`}
                   >

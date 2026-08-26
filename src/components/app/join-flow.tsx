@@ -435,7 +435,7 @@ About: I work on payments reliability — mostly the ledger path and the things 
       <Button
         type="submit"
         disabled={!ready || busy}
-        className="sticker sticker-press mt-7 h-14 w-full rounded-xl bg-roast font-display text-2xl tracking-wide text-white hover:bg-roast disabled:opacity-45"
+        className="sticker sticker-press mt-7 h-14 w-full rounded-xl bg-roast font-display text-2xl tracking-wide text-[#191104] hover:bg-roast disabled:opacity-45"
       >
         {busy ? (
           <>
@@ -593,7 +593,7 @@ function SetPasswordCard() {
           type="button"
           onClick={save}
           disabled={busy || password.length < 8}
-          className="sticker sticker-press h-11 shrink-0 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-ink hover:bg-primary disabled:opacity-45"
+          className="sticker sticker-press h-11 shrink-0 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-primary-foreground hover:bg-primary disabled:opacity-45"
         >
           {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Save

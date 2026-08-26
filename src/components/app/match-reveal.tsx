@@ -168,7 +168,7 @@ export function MatchReveal({
           </p>
           <Button
             asChild
-            className="sticker sticker-press mt-4 h-11 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-ink hover:bg-primary"
+            className="sticker sticker-press mt-4 h-11 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-primary-foreground hover:bg-primary"
           >
             <a
               href={`mailto:${them.email}?subject=${encodeURIComponent(
@@ -247,7 +247,7 @@ export function MatchReveal({
             <>
               <Button
                 asChild
-                className="sticker sticker-press h-12 w-full rounded-lg bg-primary font-display text-xl tracking-wide text-ink hover:bg-primary"
+                className="sticker sticker-press h-12 w-full rounded-lg bg-primary font-display text-xl tracking-wide text-primary-foreground hover:bg-primary"
               >
                 <a href={theirBooking} target="_blank" rel="noopener noreferrer">
                   <CalendarCheck className="mr-2 h-5 w-5" />
@@ -262,7 +262,7 @@ export function MatchReveal({
           ) : (
             <Button
               asChild
-              className="sticker sticker-press h-12 w-full rounded-lg bg-primary font-display text-xl tracking-wide text-ink hover:bg-primary"
+              className="sticker sticker-press h-12 w-full rounded-lg bg-primary font-display text-xl tracking-wide text-primary-foreground hover:bg-primary"
             >
               <a href={`mailto:${them.email}?subject=${encodeURIComponent("Coffee chat this week?")}`}>
                 <Mail className="mr-2 h-5 w-5" />

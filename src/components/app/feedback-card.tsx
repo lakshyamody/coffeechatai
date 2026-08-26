@@ -144,7 +144,7 @@ export function FeedbackCard({ matchName }: { matchName: string }) {
                 className={cn(
                   "rounded-full border-2 border-ink px-3 py-1 text-xs font-semibold transition-all",
                   tags.includes(t)
-                    ? "bg-roast text-white"
+                    ? "bg-roast text-[#191104]"
                     : "bg-white/10 text-bark hover:-translate-y-0.5",
                 )}
               >
@@ -155,7 +155,7 @@ export function FeedbackCard({ matchName }: { matchName: string }) {
           <Button
             onClick={submit}
             disabled={busy}
-            className="sticker sticker-press mt-4 h-11 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-ink hover:bg-primary"
+            className="sticker sticker-press mt-4 h-11 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-primary-foreground hover:bg-primary"
           >
             {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Save feedback

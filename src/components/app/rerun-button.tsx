@@ -43,7 +43,7 @@ export function NotifyButton() {
     <Button
       onClick={notify}
       disabled={busy}
-      className="sticker sticker-press h-11 rounded-lg bg-roast px-5 font-display text-lg tracking-wide text-white hover:bg-roast"
+      className="sticker sticker-press h-11 rounded-lg bg-roast px-5 font-display text-lg tracking-wide text-[#191104] hover:bg-roast"
     >
       <Send className={`mr-2 h-4 w-4 ${busy ? "animate-pulse" : ""}`} />
       Send the {sendsAtShort} emails
@@ -110,7 +110,7 @@ export function RerunButton() {
     <Button
       onClick={rerun}
       disabled={busy}
-      className="sticker sticker-press h-11 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-ink hover:bg-primary"
+      className="sticker sticker-press h-11 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-primary-foreground hover:bg-primary"
     >
       <RefreshCw className={`mr-2 h-4 w-4 ${busy ? "animate-spin" : ""}`} />
       Re-run the round

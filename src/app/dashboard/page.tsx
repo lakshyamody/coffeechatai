@@ -77,7 +77,7 @@ export default async function DashboardPage() {
           </p>
           <Button
             asChild
-            className="sticker sticker-press mt-7 h-12 rounded-xl bg-primary px-7 font-display text-xl tracking-wide text-ink hover:bg-primary"
+            className="sticker sticker-press mt-7 h-12 rounded-xl bg-primary px-7 font-display text-xl tracking-wide text-primary-foreground hover:bg-primary"
           >
             <Link href="/login">Join round {roundNumber}</Link>
           </Button>
@@ -169,7 +169,7 @@ export default async function DashboardPage() {
           <div className="mt-7 text-center">
             <Button
               asChild
-              className="sticker sticker-press h-12 rounded-xl bg-primary px-7 font-display text-xl tracking-wide text-ink hover:bg-primary"
+              className="sticker sticker-press h-12 rounded-xl bg-primary px-7 font-display text-xl tracking-wide text-primary-foreground hover:bg-primary"
             >
               <Link href="/join">Widen my answers</Link>
             </Button>

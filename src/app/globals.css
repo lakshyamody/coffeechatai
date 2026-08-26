@@ -24,9 +24,9 @@
   --sand: rgba(255, 255, 255, 0.16); /* hairlines / dividers */
 
   /* Accents */
-  --roast: #ff0090;                  /* the crashh pink */
-  --roast-deep: #a8327a;             /* plum */
-  --crema: #ff5cb8;                  /* lighter pink */
+  --roast: #f2b437;                  /* championship gold */
+  --roast-deep: #c2841a;             /* deep amber */
+  --crema: #ffd77e;                  /* pale gold */
   --latte: rgba(255, 255, 255, 0.7);
   --matcha: #3ddc84;
   --berry: #ff5470;
@@ -39,8 +39,8 @@
   --card-foreground: #ffffff;
   --popover: #1f2b44;
   --popover-foreground: #ffffff;
-  --primary: #ff0090;
-  --primary-foreground: #ffffff;
+  --primary: #f2b437;
+  --primary-foreground: #191104;
   --secondary: rgba(255, 255, 255, 0.1);
   --secondary-foreground: #ffffff;
   --muted: rgba(255, 255, 255, 0.1);
@@ -50,7 +50,7 @@
   --destructive: #ff5470;
   --border: rgba(255, 255, 255, 0.18);
   --input: rgba(255, 255, 255, 0.22);
-  --ring: #ff0090;
+  --ring: #f2b437;
   --radius: 0.9rem;
 
   --chart-1: var(--roast);

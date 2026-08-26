@@ -88,7 +88,7 @@ export function Hero({
         <motion.div whileHover={{ y: -2, scale: 1.01 }} whileTap={{ scale: 0.98 }}>
           <Button
             type="submit"
-            className="glass-pill font-display h-13 w-full rounded-full px-8 text-[20px] italic tracking-normal text-white shadow-[0_12px_40px_rgba(0,0,0,0.35)] hover:bg-white/20 sm:w-auto"
+            className="font-display h-13 w-full rounded-full border border-white/20 px-8 text-[20px] italic tracking-normal text-primary-foreground shadow-[0_12px_40px_rgba(0,0,0,0.35)] hover:bg-crema sm:w-auto"
           >
             get matched <ArrowRight className="ml-2 h-5 w-5" />
           </Button>

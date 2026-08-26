@@ -73,7 +73,7 @@ export async function Proof() {
             </p>
             <Button
               asChild
-              className="sticker sticker-press mt-5 h-11 rounded-lg bg-primary px-6 font-display text-lg tracking-wide text-ink hover:bg-primary"
+              className="sticker sticker-press mt-5 h-11 rounded-lg bg-primary px-6 font-display text-lg tracking-wide text-primary-foreground hover:bg-primary"
             >
               <Link href="/login">Join the pool</Link>
             </Button>

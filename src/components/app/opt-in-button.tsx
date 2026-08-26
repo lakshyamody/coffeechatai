@@ -31,7 +31,7 @@ export function OptInButton() {
     <Button
       onClick={optIn}
       disabled={busy}
-      className="sticker sticker-press h-12 rounded-xl bg-primary px-7 font-display text-xl tracking-wide text-ink hover:bg-primary"
+      className="sticker sticker-press h-12 rounded-xl bg-primary px-7 font-display text-xl tracking-wide text-primary-foreground hover:bg-primary"
     >
       Put me back in
     </Button>

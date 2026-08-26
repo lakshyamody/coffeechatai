@@ -109,7 +109,7 @@ export function AvailabilityPreview() {
         </span>
       </div>
 
-      <div className="sticker mt-3 grid place-items-center rounded-lg bg-primary py-2.5 text-sm font-bold text-ink">
+      <div className="sticker mt-3 grid place-items-center rounded-lg bg-primary py-2.5 text-sm font-bold text-primary-foreground">
         Book 30 minutes
       </div>
 

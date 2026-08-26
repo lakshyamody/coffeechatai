@@ -187,7 +187,7 @@ export function LoginFlow({
 
           <Button
             type="submit"
-            className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-primary font-display text-xl tracking-wide text-ink hover:bg-primary"
+            className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-primary font-display text-xl tracking-wide text-primary-foreground hover:bg-primary"
           >
             Continue <ArrowRight className="ml-1 h-5 w-5" />
           </Button>
@@ -225,7 +225,7 @@ export function LoginFlow({
           <Button
             type="submit"
             disabled={busy || password.length === 0}
-            className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-primary font-display text-xl tracking-wide text-ink hover:bg-primary disabled:opacity-45"
+            className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-primary font-display text-xl tracking-wide text-primary-foreground hover:bg-primary disabled:opacity-45"
           >
             {busy ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
             Sign in
@@ -321,7 +321,7 @@ export function LoginFlow({
           <Button
             type="submit"
             disabled={busy || code.length !== 6}
-            className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-roast font-display text-xl tracking-wide text-white hover:bg-roast disabled:opacity-45"
+            className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-roast font-display text-xl tracking-wide text-[#191104] hover:bg-roast disabled:opacity-45"
           >
             {busy ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
             Confirm
@@ -371,7 +371,7 @@ export function LoginFlow({
           <Button
             type="submit"
             disabled={busy || newPassword.length < 8}
-            className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-primary font-display text-xl tracking-wide text-ink hover:bg-primary disabled:opacity-45"
+            className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-primary font-display text-xl tracking-wide text-primary-foreground hover:bg-primary disabled:opacity-45"
           >
             {busy ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
             Save and continue
