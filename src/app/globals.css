@@ -4,87 +4,69 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ------------------------------------------------------------------
-   Theme tokens — ported from ditto.ai's design system, recolored for
-   coffee chats. Cream paper background, golden CTA, espresso ink.
-   ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------
+   Theme tokens — the crashh design language: deep navy behind a blurred
+   photographic backdrop, frosted-glass surfaces, white serif type, hot-pink
+   accents. The token NAMES are unchanged from the paper-and-ink era so every
+   component that says `text-ink` or `.sticker` restyles without being
+   touched; only the meanings moved.
+   ------------------------------------------------------------------------ */
 
 :root {
-  /* Ditto's neutral ramp (Nu-1 .. Nu-7), warmed toward coffee */
-  --paper: #f7f7f2;
-  --cream: #f0efdc;
-  --sand: #e6e3cd;
-  --clay: #b9b689;
-  --olive: #646446;
-  --bark: #3b3b31;
-  --espresso: #1e1d1b;
-  --ink: #0d0c0b;
+  /* Surfaces, darkest to lightest */
+  --ink: #ffffff;                    /* primary text (was near-black) */
+  --espresso: #0a1220;               /* footer / deepest band */
+  --bark: rgba(255, 255, 255, 0.82); /* body text */
+  --olive: rgba(255, 255, 255, 0.6); /* muted text */
+  --clay: rgba(255, 255, 255, 0.45); /* faint text */
+  --paper: #2b3a55;                  /* base page navy */
+  --cream: #1a2236;                  /* deeper section navy */
+  --sand: rgba(255, 255, 255, 0.16); /* hairlines / dividers */
 
-  /* Brand — replaces ditto's hot pink with roasted coffee tones */
-  --roast: #c0562b;
-  --roast-deep: #96421f;
-  --crema: #ffcd2a;
-  --latte: #e8c9a0;
-  --matcha: #2faf51;
-  --berry: #ef4146;
-  --sky: #4285f4;
+  /* Accents */
+  --roast: #ff0090;                  /* the crashh pink */
+  --roast-deep: #a8327a;             /* plum */
+  --crema: #ff5cb8;                  /* lighter pink */
+  --latte: rgba(255, 255, 255, 0.7);
+  --matcha: #3ddc84;
+  --berry: #ff5470;
+  --sky: #6ea8ff;
 
   /* shadcn contract */
-  --background: hsl(57 40% 90%);
-  --foreground: hsl(222 33% 6%);
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(222 33% 6%);
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(222 33% 6%);
-  --primary: hsl(46 100% 58%);
-  --primary-foreground: hsl(0 0% 0%);
-  --secondary: hsl(57 40% 90%);
-  --secondary-foreground: hsl(222 33% 6%);
-  --muted: hsl(57 20% 85%);
-  --muted-foreground: hsl(57 10% 34%);
-  --accent: hsl(57 40% 85%);
-  --accent-foreground: hsl(222 33% 6%);
-  --destructive: hsl(0 72% 51%);
-  --border: hsl(57 20% 78%);
-  --input: hsl(57 20% 78%);
-  --ring: hsl(46 100% 58%);
-  --radius: 0.5rem;
+  --background: #1a2236;
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.08);
+  --card-foreground: #ffffff;
+  --popover: #1f2b44;
+  --popover-foreground: #ffffff;
+  --primary: #ff0090;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(255, 255, 255, 0.1);
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.1);
+  --muted-foreground: rgba(255, 255, 255, 0.6);
+  --accent: rgba(255, 255, 255, 0.14);
+  --accent-foreground: #ffffff;
+  --destructive: #ff5470;
+  --border: rgba(255, 255, 255, 0.18);
+  --input: rgba(255, 255, 255, 0.22);
+  --ring: #ff0090;
+  --radius: 0.9rem;
 
   --chart-1: var(--roast);
   --chart-2: var(--crema);
-  --chart-3: var(--olive);
-  --chart-4: var(--sky);
-  --chart-5: var(--matcha);
+  --chart-3: var(--sky);
+  --chart-4: var(--matcha);
+  --chart-5: var(--latte);
 
-  --sidebar: var(--paper);
-  --sidebar-foreground: hsl(222 33% 6%);
+  --sidebar: var(--cream);
+  --sidebar-foreground: #ffffff;
   --sidebar-primary: var(--roast);
   --sidebar-primary-foreground: #fff;
-  --sidebar-accent: hsl(57 40% 85%);
-  --sidebar-accent-foreground: hsl(222 33% 6%);
-  --sidebar-border: hsl(57 20% 78%);
-  --sidebar-ring: hsl(46 100% 58%);
-}
-
-.dark {
-  --background: #16110e;
-  --foreground: #f7f7f2;
-  --card: #221a15;
-  --card-foreground: #f7f7f2;
-  --popover: #221a15;
-  --popover-foreground: #f7f7f2;
-  --primary: hsl(46 100% 58%);
-  --primary-foreground: #000;
-  --secondary: #2c231c;
-  --secondary-foreground: #f7f7f2;
-  --muted: #2c231c;
-  --muted-foreground: #b6a898;
-  --accent: #2c231c;
-  --accent-foreground: #f7f7f2;
-  --destructive: hsl(0 72% 58%);
-  --border: rgba(255, 255, 255, 0.12);
-  --input: rgba(255, 255, 255, 0.16);
-  --ring: hsl(46 100% 58%);
+  --sidebar-accent: rgba(255, 255, 255, 0.12);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.18);
+  --sidebar-ring: var(--roast);
 }
 
 @theme inline {
@@ -137,9 +119,11 @@
   --color-berry: var(--berry);
   --color-sky: var(--sky);
 
-  --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-jersey), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-headline), ui-serif, Georgia, serif;
   --font-script: var(--font-caveat), ui-serif, cursive;
+  --font-timer: var(--font-cutecat), var(--font-caveat), cursive;
+  --font-logo: var(--font-logo-face), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --radius-sm: calc(var(--radius) * 0.6);
@@ -154,6 +138,7 @@
   --animate-marquee-reverse: marquee-reverse 38s linear infinite;
   --animate-steam: steam 3.6s ease-in-out infinite;
   --animate-float: float 6s ease-in-out infinite;
+  --animate-sun: sun 6s ease-in-out infinite;
   --animate-pop: pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -172,6 +157,10 @@
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(var(--tw-rotate, 0deg)); }
   50% { transform: translateY(-10px) rotate(var(--tw-rotate, 0deg)); }
+}
+@keyframes sun {
+  0%, 100% { transform: rotate(-4deg) scale(1); }
+  50% { transform: rotate(4deg) scale(1.04); }
 }
 @keyframes pop {
   0% { transform: scale(0.9); opacity: 0; }
@@ -193,30 +182,91 @@
 }
 
 @layer components {
-  /* Ditto's signature hard-shadow "sticker" surface */
+  /*
+    The card surface. Formerly a hard-shadow paper sticker; now the crashh
+    frosted-glass panel. Every existing `.sticker` in the app picks this up.
+  */
   .sticker {
-    @apply rounded-xl border-2 border-ink bg-white;
-    box-shadow: 4px 4px 0 0 var(--ink);
+    @apply rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md;
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.45);
   }
   .sticker-lg {
-    @apply rounded-2xl border-2 border-ink bg-white;
-    box-shadow: 6px 6px 0 0 var(--ink);
+    @apply rounded-3xl border border-white/15 bg-white/10 backdrop-blur-md;
+    box-shadow: 0 32px 80px -24px rgba(0, 0, 0, 0.5);
   }
   .sticker-press {
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    transition: transform 0.15s ease, background-color 0.15s ease;
   }
   .sticker-press:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 0 var(--ink);
+    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.18);
   }
+  .sticker-press:active {
+    transform: scale(0.98);
+  }
+
+  /*
+    The page backdrop. Formerly a dotted paper grain; now the fixed, blurred
+    photographic skyline every crashh page sits on. Same class name, so every
+    page wrapper gets it for free.
+  */
   .paper-grain {
-    background-image: radial-gradient(
-      circle at 1px 1px,
-      rgba(30, 29, 27, 0.055) 1px,
-      transparent 0
-    );
-    background-size: 14px 14px;
+    position: relative;
+    isolation: isolate;
+    background-color: #1a2236;
   }
+  .paper-grain::before {
+    content: "";
+    position: fixed;
+    inset: -5%;
+    background-image: url("/landing_bg.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    filter: blur(6px) saturate(1.2) brightness(0.85);
+    transform: scale(1.08);
+    z-index: -2;
+    pointer-events: none;
+  }
+  .paper-grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% 10%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%),
+      radial-gradient(80% 60% at 50% 90%, rgba(10, 15, 30, 0.6) 0%, rgba(10, 15, 30, 0) 70%),
+      linear-gradient(180deg, rgba(43, 58, 85, 0.37) 0%, rgba(26, 34, 54, 0.57) 100%);
+    backdrop-filter: blur(7px) saturate(1.1);
+    -webkit-backdrop-filter: blur(7px) saturate(1.1);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Variant backdrops for the deeper scroll sections. */
+  .skyline-2 { background-color: #132042; }
+  .skyline-2::before { background-image: url("/bg2.jpg"); background-position: center 55%; }
+  .skyline-4 { background-color: #1a2236; }
+  .skyline-4::before { background-image: url("/bg4.jpg"); background-position: center top; }
+
+  /* Crashh headline feel: tight serif with a hint of grit. */
+  .headline {
+    letter-spacing: -0.01em;
+    filter: contrast(1.05);
+  }
+  .text-stroke-soft {
+    text-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.35),
+      0 0 16px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Frosted pill — nav links and CTAs. */
+  .glass-pill {
+    @apply inline-flex items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-md transition-colors;
+  }
+  .glass-pill:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
   .marquee-mask {
     -webkit-mask-image: linear-gradient(
       to right,

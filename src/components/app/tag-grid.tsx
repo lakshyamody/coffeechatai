@@ -56,8 +56,8 @@ export function TagGrid({
             className={cn(
               "group flex items-start gap-3 rounded-xl border-2 border-ink p-3 text-left transition-all",
               active
-                ? "bg-primary shadow-[3px_3px_0_0_var(--color-ink)]"
-                : "bg-white shadow-[3px_3px_0_0_var(--color-ink)] hover:-translate-y-0.5",
+                ? "bg-primary"
+                : "bg-white/10 hover:-translate-y-0.5 hover:bg-white/15",
               disabled && "cursor-not-allowed opacity-40 hover:translate-y-0",
             )}
           >

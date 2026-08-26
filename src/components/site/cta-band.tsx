@@ -1,30 +1,28 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { CoffeeCup } from "@/components/brand";
-import { Button } from "@/components/ui/button";
+import { FadeUp, SunBurst } from "@/components/site/fx";
 import { ROUND_LABELS } from "@/lib/schedule";
 
 export function CtaBand() {
   return (
-    <section className="border-b-2 border-ink bg-roast py-20 text-paper">
-      <div className="mx-auto max-w-3xl px-5 text-center">
-        <CoffeeCup className="mx-auto h-16 w-16 animate-float" />
-        <h2 className="mt-6 font-display text-5xl leading-none sm:text-6xl">
-          This round closes {ROUND_LABELS.closesDay}
+    <div className="flex min-h-[70vh] w-full items-center justify-center px-6 py-[80px]">
+      <FadeUp className="flex flex-col items-center text-center">
+        <SunBurst />
+        <h2 className="headline font-display text-[44px] leading-[1.05] tracking-tight text-white md:text-[64px]">
+          <span className="block">network without</span>
+          <span className="block italic">the small talk</span>
         </h2>
-        <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-paper/85">
-          One paste, one question, one conversation {ROUND_LABELS.sendsDay}. Opt out any week you
-          don&apos;t feel like it.
+        <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-white/75">
+          This round closes {ROUND_LABELS.closesDay}. One paste, one question,
+          one conversation {ROUND_LABELS.sendsDay}.
         </p>
-        <Button
-          asChild
-          className="sticker sticker-press mt-8 h-14 rounded-xl bg-primary px-8 font-display text-2xl tracking-wide text-ink hover:bg-primary"
+        <Link
+          href="/login"
+          className="glass-pill font-display mt-8 rounded-full px-[60px] py-[14px] text-[22px] italic tracking-normal shadow-[0_12px_40px_rgba(0,0,0,0.35)] md:px-[80px]"
         >
-          <Link href="/login">
-            Get matched <ArrowRight className="ml-1 h-6 w-6" />
-          </Link>
-        </Button>
-      </div>
-    </section>
+          get matched <ArrowRight className="ml-2 inline h-5 w-5" />
+        </Link>
+      </FadeUp>
+    </div>
   );
 }

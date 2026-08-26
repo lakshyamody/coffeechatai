@@ -156,7 +156,7 @@ export function MatchReveal({
                 navigator.clipboard?.writeText(them.email);
                 toast.success("Email copied.");
               }}
-              className="rounded-md border-2 border-ink bg-white p-1.5 shadow-[2px_2px_0_0_var(--color-ink)] transition-transform hover:translate-y-px"
+              className="rounded-md border border-white/25 bg-white/10 p-1.5 transition-transform hover:translate-y-px"
               aria-label="Copy email address"
             >
               <Copy className="h-3.5 w-3.5 text-bark" />

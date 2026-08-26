@@ -1,4 +1,3 @@
-import { Eyebrow } from "@/components/brand";
 import { ROUND_LABELS, closesAt } from "@/lib/schedule";
 import { SCORE_TERMS } from "@/lib/scoring";
 import {
@@ -69,20 +68,23 @@ const QUESTIONS = [
 
 export function Faq() {
   return (
-    <section id="faq" className="border-b-2 border-ink bg-paper py-20">
+    <section id="faq" className="py-20">
       <div className="mx-auto max-w-3xl px-5">
         <div className="text-center">
-          <Eyebrow>Questions</Eyebrow>
-          <h2 className="mt-3 font-display text-5xl leading-none text-ink sm:text-6xl">
-            Sometimes our lines are busy
+          <h2 className="headline mt-3 font-display text-[40px] leading-[1.05] tracking-tight text-ink sm:text-[56px]">
+            sometimes our lines are busy
           </h2>
         </div>
-        <Accordion type="single" collapsible className="mt-10 flex flex-col gap-3">
+        <Accordion
+          type="single"
+          collapsible
+          className="sticker-lg mt-10 flex flex-col px-5 py-2 md:px-7"
+        >
           {QUESTIONS.map((item, i) => (
             <AccordionItem
               key={item.q}
               value={`q${i}`}
-              className="sticker rounded-xl border-b-2 px-5"
+              className="border-b border-white/10 px-1 last:border-b-0"
             >
               <AccordionTrigger className="py-4 text-left font-display text-xl leading-tight tracking-wide text-ink hover:no-underline">
                 {item.q}

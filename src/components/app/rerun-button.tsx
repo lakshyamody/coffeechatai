@@ -77,7 +77,7 @@ export function CloseRoundButton() {
       onClick={close}
       disabled={busy}
       variant="ghost"
-      className="sticker sticker-press h-11 rounded-lg bg-white px-5 font-display text-lg tracking-wide text-ink hover:bg-white"
+      className="sticker sticker-press h-11 rounded-lg px-5 font-display text-lg tracking-wide text-ink"
     >
       <Archive className="mr-2 h-4 w-4" />
       Close round &amp; open the next

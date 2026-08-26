@@ -2,16 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
-import { CoffeeCup, Scribble } from "@/components/brand";
-import { Marquee } from "@/components/site/marquee";
-import { Button } from "@/components/ui/button";
-import { MARQUEE_ORGS } from "@/lib/orgs";
-import { Input } from "@/components/ui/input";
-import { ROUND_LABELS, sendsAt } from "@/lib/schedule";
-import { Countdown } from "@/components/site/countdown";
 
-const ORGS = MARQUEE_ORGS;
+import { Countdown } from "@/components/site/countdown";
+import { Marquee } from "@/components/site/marquee";
+import { SunBurst } from "@/components/site/fx";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { MARQUEE_ORGS } from "@/lib/orgs";
+import { ROUND_LABELS, sendsAt } from "@/lib/schedule";
 
 export function Hero({
   members,
@@ -36,84 +36,83 @@ export function Hero({
   };
 
   return (
-    <section className="paper-grain relative overflow-hidden border-b-2 border-ink">
-      {/* floating decorations */}
-      <CoffeeCup className="absolute left-[6%] top-24 hidden h-16 w-16 -rotate-12 animate-float opacity-70 lg:block" />
-      <CoffeeCup className="absolute right-[7%] top-40 hidden h-12 w-12 rotate-12 animate-float opacity-60 lg:block" />
-
-      <div className="mx-auto max-w-6xl px-5 pb-16 pt-14 text-center sm:pt-20">
-        <div className="sticker mx-auto mb-7 inline-flex items-center gap-2 rounded-full px-4 py-1.5">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-matcha opacity-70" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-matcha" />
+    <section className="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center px-6 pb-16 pt-24 md:pt-28 2xl:max-w-6xl">
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative flex flex-col items-center"
+      >
+        <SunBurst />
+        <h1 className="headline font-display relative z-10 -mt-2 text-center text-[52px] leading-[1.05] tracking-tight text-white md:text-[76px] 2xl:text-[92px]">
+          <span className="block">one coffee chat</span>
+          <span className="block">
+            every <em className="italic">{ROUND_LABELS.sendsDay.toLowerCase()}</em>
           </span>
-          <Countdown
-            className="text-sm font-semibold text-bark"
-            deadlineIso={deadlineIso}
-            label={deadlineLabel}
-            zone={zone}
-            fallback={deadlineFallback}
-          />
-        </div>
-
-        <h1 className="font-display text-6xl leading-[0.92] tracking-tight text-ink sm:text-7xl md:text-8xl">
-          One coffee chat.
-          <br />
-          Every {ROUND_LABELS.sendsDay}.
         </h1>
+      </motion.div>
 
-        <div className="mx-auto mt-4 max-w-md">
-          <Scribble className="mx-auto h-3 w-56" />
-        </div>
-
-        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-bark">
-          Tell us who you&apos;d like to meet. {sendsAt} we send you{" "}
-          <strong className="font-semibold text-ink">one person</strong> worth
-          talking to, why you two, and a time you&apos;re both free.
-        </p>
-
-        <form
-          onSubmit={submit}
-          className="mx-auto mt-8 flex w-full max-w-md flex-col gap-3 sm:flex-row"
-        >
-          <Input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@work-or-school.edu"
-            aria-label="Your email"
-            className="sticker h-12 rounded-lg border-2 text-base placeholder:text-olive/60 focus-visible:ring-0"
-          />
-          <Button
-            type="submit"
-            className="sticker sticker-press h-12 shrink-0 rounded-lg bg-primary px-6 font-display text-xl tracking-wide text-ink hover:bg-primary"
-          >
-            Get matched <ArrowRight className="ml-1 h-5 w-5" />
-          </Button>
-        </form>
-
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-olive">
-          {["Free to join", "No swiping, ever", "Opt out any week"].map((t) => (
-            <span key={t} className="inline-flex items-center gap-1.5">
-              <Check className="h-4 w-4 text-matcha" strokeWidth={3} />
-              {t}
-            </span>
-          ))}
-        </div>
-
-        <p className="mt-8 text-sm font-medium text-bark">
+      <div className="mt-8 flex flex-col items-center 2xl:mt-10">
+        <Countdown
+          size="hero"
+          deadlineIso={deadlineIso}
+          label={deadlineLabel.replace(" in", "")}
+          zone={zone}
+          fallback={deadlineFallback}
+        />
+        <p className="mt-1 text-sm text-white/80">
           {members === 0
             ? "Nobody has joined yet. Be the first."
             : members === 1
               ? "1 person in the pool so far."
               : `${members.toLocaleString()} people in the pool so far.`}
         </p>
-
       </div>
 
-      <div className="border-t-2 border-ink bg-sand/60 py-4">
-        <Marquee items={ORGS} />
+      <motion.form
+        onSubmit={submit}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="mt-10 flex w-full max-w-md flex-col items-stretch gap-3 sm:flex-row"
+      >
+        <Input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@work-or-school.edu"
+          aria-label="Your email"
+          className="glass-pill h-13 rounded-full px-5 text-base text-white placeholder:text-white/50 focus-visible:ring-1 focus-visible:ring-white/50"
+        />
+        <motion.div whileHover={{ y: -2, scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            type="submit"
+            className="glass-pill font-display h-13 w-full rounded-full px-8 text-[20px] italic tracking-normal text-white shadow-[0_12px_40px_rgba(0,0,0,0.35)] hover:bg-white/20 sm:w-auto"
+          >
+            get matched <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </motion.div>
+      </motion.form>
+
+      <p className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/70">
+        {["Free to join", "No swiping, ever", "Opt out any week"].map((t) => (
+          <span key={t} className="inline-flex items-center gap-1.5">
+            <Check className="h-3.5 w-3.5 text-matcha" strokeWidth={3} />
+            {t}
+          </span>
+        ))}
+      </p>
+
+      <p className="mt-2 text-center text-xs text-white/60">
+        One person, {sendsAt.toLowerCase()}, straight to your inbox.
+      </p>
+
+      <div className="mt-14 w-full">
+        <p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.3em] text-white/50">
+          for people from places like
+        </p>
+        <Marquee items={MARQUEE_ORGS} />
       </div>
     </section>
   );

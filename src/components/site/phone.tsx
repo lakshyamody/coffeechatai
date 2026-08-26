@@ -39,7 +39,7 @@ export function PhoneMock({
               className={cn(
                 "max-w-[85%] rounded-2xl px-3 py-2 text-[0.8rem] leading-snug",
                 b.from === "them"
-                  ? "self-start rounded-bl-md border-2 border-ink bg-white text-ink"
+                  ? "self-start rounded-bl-md bg-white text-black shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
                   : "self-end rounded-br-md bg-sky text-white",
               )}
             >

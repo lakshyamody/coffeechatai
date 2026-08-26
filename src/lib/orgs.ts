@@ -13,57 +13,59 @@ export interface Org {
   kind: "school" | "company" | "accelerator";
   /** Shown in the landing marquee. */
   marquee?: boolean;
+  /** Primary web domain — where the marquee fetches the org's logo from. */
+  domain?: string;
 }
 
 export const IVY_LEAGUE: Org[] = [
-  { name: "Harvard", city: "Boston", kind: "school", marquee: true },
-  { name: "Yale", city: "New Haven", kind: "school", marquee: true },
-  { name: "Princeton", city: "Princeton", kind: "school", marquee: true },
-  { name: "Columbia", city: "New York", kind: "school", marquee: true },
-  { name: "UPenn", city: "Philadelphia", kind: "school", marquee: true },
-  { name: "Brown", city: "Providence", kind: "school" },
-  { name: "Dartmouth", city: "Hanover", kind: "school" },
-  { name: "Cornell", city: "Ithaca", kind: "school", marquee: true },
+  { name: "Harvard", city: "Boston", kind: "school", marquee: true, domain: "harvard.edu" },
+  { name: "Yale", city: "New Haven", kind: "school", marquee: true, domain: "yale.edu" },
+  { name: "Princeton", city: "Princeton", kind: "school", marquee: true, domain: "princeton.edu" },
+  { name: "Columbia", city: "New York", kind: "school", marquee: true, domain: "columbia.edu" },
+  { name: "UPenn", city: "Philadelphia", kind: "school", marquee: true, domain: "upenn.edu" },
+  { name: "Brown", city: "Providence", kind: "school", domain: "brown.edu" },
+  { name: "Dartmouth", city: "Hanover", kind: "school", domain: "dartmouth.edu" },
+  { name: "Cornell", city: "Ithaca", kind: "school", marquee: true, domain: "cornell.edu" },
 ];
 
 export const US_SCHOOLS: Org[] = [
-  { name: "Stanford", city: "San Francisco", kind: "school", marquee: true },
-  { name: "MIT", city: "Boston", kind: "school", marquee: true },
-  { name: "UC Berkeley", city: "San Francisco", kind: "school", marquee: true },
-  { name: "Carnegie Mellon", city: "Pittsburgh", kind: "school", marquee: true },
-  { name: "Caltech", city: "Los Angeles", kind: "school" },
-  { name: "Georgia Tech", city: "Atlanta", kind: "school", marquee: true },
-  { name: "UT Austin", city: "Austin", kind: "school" },
-  { name: "UIUC", city: "Chicago", kind: "school" },
-  { name: "Waterloo", city: "Waterloo", kind: "school", marquee: true },
+  { name: "Stanford", city: "San Francisco", kind: "school", marquee: true, domain: "stanford.edu" },
+  { name: "MIT", city: "Boston", kind: "school", marquee: true, domain: "mit.edu" },
+  { name: "UC Berkeley", city: "San Francisco", kind: "school", marquee: true, domain: "berkeley.edu" },
+  { name: "Carnegie Mellon", city: "Pittsburgh", kind: "school", marquee: true, domain: "cmu.edu" },
+  { name: "Caltech", city: "Los Angeles", kind: "school", domain: "caltech.edu" },
+  { name: "Georgia Tech", city: "Atlanta", kind: "school", marquee: true, domain: "gatech.edu" },
+  { name: "UT Austin", city: "Austin", kind: "school", domain: "utexas.edu" },
+  { name: "UIUC", city: "Chicago", kind: "school", domain: "illinois.edu" },
+  { name: "Waterloo", city: "Waterloo", kind: "school", marquee: true, domain: "uwaterloo.ca" },
 ];
 
 export const SINGAPORE_SCHOOLS: Org[] = [
-  { name: "NUS", city: "Singapore", kind: "school", marquee: true },
-  { name: "NTU Singapore", city: "Singapore", kind: "school", marquee: true },
-  { name: "SMU", city: "Singapore", kind: "school" },
+  { name: "NUS", city: "Singapore", kind: "school", marquee: true, domain: "nus.edu.sg" },
+  { name: "NTU Singapore", city: "Singapore", kind: "school", marquee: true, domain: "ntu.edu.sg" },
+  { name: "SMU", city: "Singapore", kind: "school", domain: "smu.edu.sg" },
 ];
 
 export const INDIA_SCHOOLS: Org[] = [
-  { name: "IIT Bombay", city: "Mumbai", kind: "school", marquee: true },
-  { name: "IIT Delhi", city: "Delhi", kind: "school", marquee: true },
-  { name: "IIT Madras", city: "Chennai", kind: "school", marquee: true },
-  { name: "IIT Kanpur", city: "Kanpur", kind: "school" },
-  { name: "IIT Kharagpur", city: "Kolkata", kind: "school" },
-  { name: "IISc Bangalore", city: "Bangalore", kind: "school", marquee: true },
-  { name: "IIIT Hyderabad", city: "Hyderabad", kind: "school", marquee: true },
-  { name: "BITS Pilani", city: "Pilani", kind: "school", marquee: true },
-  { name: "NIT Trichy", city: "Chennai", kind: "school" },
-  { name: "Ashoka University", city: "Delhi", kind: "school" },
+  { name: "IIT Bombay", city: "Mumbai", kind: "school", marquee: true, domain: "iitb.ac.in" },
+  { name: "IIT Delhi", city: "Delhi", kind: "school", marquee: true, domain: "iitd.ac.in" },
+  { name: "IIT Madras", city: "Chennai", kind: "school", marquee: true, domain: "iitm.ac.in" },
+  { name: "IIT Kanpur", city: "Kanpur", kind: "school", domain: "iitk.ac.in" },
+  { name: "IIT Kharagpur", city: "Kolkata", kind: "school", domain: "iitkgp.ac.in" },
+  { name: "IISc Bangalore", city: "Bangalore", kind: "school", marquee: true, domain: "iisc.ac.in" },
+  { name: "IIIT Hyderabad", city: "Hyderabad", kind: "school", marquee: true, domain: "iiit.ac.in" },
+  { name: "BITS Pilani", city: "Pilani", kind: "school", marquee: true, domain: "bits-pilani.ac.in" },
+  { name: "NIT Trichy", city: "Chennai", kind: "school", domain: "nitt.edu" },
+  { name: "Ashoka University", city: "Delhi", kind: "school", domain: "ashoka.edu.in" },
 ];
 
 export const RESEARCH_LABS: Org[] = [
-  { name: "MIT CSAIL", city: "Boston", kind: "school" },
-  { name: "Stanford AI Lab", city: "San Francisco", kind: "school" },
-  { name: "ETH Zürich", city: "Zürich", kind: "school" },
-  { name: "Mila", city: "Montréal", kind: "school" },
-  { name: "Alan Turing Institute", city: "London", kind: "school" },
-  { name: "A*STAR", city: "Singapore", kind: "school" },
+  { name: "MIT CSAIL", city: "Boston", kind: "school", domain: "csail.mit.edu" },
+  { name: "Stanford AI Lab", city: "San Francisco", kind: "school", domain: "ai.stanford.edu" },
+  { name: "ETH Zürich", city: "Zürich", kind: "school", domain: "ethz.ch" },
+  { name: "Mila", city: "Montréal", kind: "school", domain: "mila.quebec" },
+  { name: "Alan Turing Institute", city: "London", kind: "school", domain: "turing.ac.uk" },
+  { name: "A*STAR", city: "Singapore", kind: "school", domain: "a-star.edu.sg" },
 ];
 
 export const SCHOOLS: Org[] = [
@@ -77,10 +79,10 @@ export const SCHOOLS: Org[] = [
 export const YC_BATCHES = ["W26", "S25", "W25", "S24", "W24", "S23"] as const;
 
 export const ACCELERATORS: Org[] = [
-  { name: "Y Combinator", city: "San Francisco", kind: "accelerator", marquee: true },
-  { name: "Antler", city: "Singapore", kind: "accelerator" },
-  { name: "South Park Commons", city: "San Francisco", kind: "accelerator" },
-  { name: "Entrepreneur First", city: "Bangalore", kind: "accelerator" },
+  { name: "Y Combinator", city: "San Francisco", kind: "accelerator", marquee: true, domain: "ycombinator.com" },
+  { name: "Antler", city: "Singapore", kind: "accelerator", domain: "antler.co" },
+  { name: "South Park Commons", city: "San Francisco", kind: "accelerator", domain: "southparkcommons.com" },
+  { name: "Entrepreneur First", city: "Bangalore", kind: "accelerator", domain: "joinef.com" },
 ];
 
 /** YC-shaped startups — the kind of company that shows up in an SF batch. */
@@ -96,19 +98,19 @@ export const YC_STARTUPS: Org[] = [
 ];
 
 export const BIG_TECH: Org[] = [
-  { name: "Stripe", city: "San Francisco", kind: "company", marquee: true },
-  { name: "Figma", city: "San Francisco", kind: "company", marquee: true },
-  { name: "Ramp", city: "New York", kind: "company", marquee: true },
-  { name: "Datadog", city: "New York", kind: "company", marquee: true },
-  { name: "Cloudflare", city: "San Francisco", kind: "company" },
-  { name: "Notion", city: "San Francisco", kind: "company" },
-  { name: "Linear", city: "San Francisco", kind: "company" },
-  { name: "Airbnb", city: "San Francisco", kind: "company" },
-  { name: "Anthropic", city: "San Francisco", kind: "company", marquee: true },
-  { name: "Razorpay", city: "Bangalore", kind: "company", marquee: true },
-  { name: "Sea Group", city: "Singapore", kind: "company" },
-  { name: "Grab", city: "Singapore", kind: "company", marquee: true },
-  { name: "Zerodha", city: "Bangalore", kind: "company" },
+  { name: "Stripe", city: "San Francisco", kind: "company", marquee: true, domain: "stripe.com" },
+  { name: "Figma", city: "San Francisco", kind: "company", marquee: true, domain: "figma.com" },
+  { name: "Ramp", city: "New York", kind: "company", marquee: true, domain: "ramp.com" },
+  { name: "Datadog", city: "New York", kind: "company", marquee: true, domain: "datadoghq.com" },
+  { name: "Cloudflare", city: "San Francisco", kind: "company", domain: "cloudflare.com" },
+  { name: "Notion", city: "San Francisco", kind: "company", domain: "notion.so" },
+  { name: "Linear", city: "San Francisco", kind: "company", domain: "linear.app" },
+  { name: "Airbnb", city: "San Francisco", kind: "company", domain: "airbnb.com" },
+  { name: "Anthropic", city: "San Francisco", kind: "company", marquee: true, domain: "anthropic.com" },
+  { name: "Razorpay", city: "Bangalore", kind: "company", marquee: true, domain: "razorpay.com" },
+  { name: "Sea Group", city: "Singapore", kind: "company", domain: "sea.com" },
+  { name: "Grab", city: "Singapore", kind: "company", marquee: true, domain: "grab.com" },
+  { name: "Zerodha", city: "Bangalore", kind: "company", domain: "zerodha.com" },
 ];
 
 export const ALL_ORGS: Org[] = [
@@ -124,7 +126,7 @@ export const orgByName = (name: string) =>
   ALL_ORGS.find((o) => name.startsWith(o.name));
 
 /** Landing-page marquee — a spread across geographies, not just SF. */
-export const MARQUEE_ORGS: string[] = [
+const MARQUEE_NAMES = [
   "Y Combinator",
   "Stanford",
   "NUS",
@@ -152,3 +154,13 @@ export const MARQUEE_ORGS: string[] = [
   "UPenn",
   "Georgia Tech",
 ];
+
+export interface MarqueeOrg {
+  name: string;
+  domain?: string;
+}
+
+export const MARQUEE_ORGS: MarqueeOrg[] = MARQUEE_NAMES.map((name) => ({
+  name,
+  domain: orgByName(name)?.domain,
+}));

@@ -517,7 +517,7 @@ function TagList({ title, ids }: { title: string; ids: string[] }) {
         {ids.map((id) => (
           <span
             key={id}
-            className="rounded-full border-2 border-ink bg-white px-2.5 py-0.5 text-xs font-semibold text-bark"
+            className="rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-bark"
           >
             {tagLabel(id)}
           </span>

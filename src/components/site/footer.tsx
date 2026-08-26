@@ -1,77 +1,57 @@
 import Link from "next/link";
-import { Logo } from "@/components/brand";
 
-const COLUMNS = [
-  {
-    title: "Product",
-    links: [
-      { label: "How it works", href: "/#how" },
-      { label: "The matchmaker", href: "/#matchmaker" },
-      { label: "Matching lab", href: "/lab" },
-      { label: "Outbox", href: "/outbox" },
-      { label: "Your match", href: "/dashboard" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Coffee chat guide", href: "/#faq" },
-      { label: "Questions to ask", href: "/#faq" },
-      { label: "Manifesto", href: "/#matchmaker" },
-      { label: "Careers", href: "/#" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { label: "Terms", href: "/#" },
-      { label: "Privacy", href: "/#" },
-      { label: "Cookies", href: "/#" },
-      { label: "Safety", href: "/#trust" },
-    ],
-  },
+const RESOURCES = [
+  { label: "How it works", href: "/#how" },
+  { label: "The matchmaker", href: "/#matchmaker" },
+  { label: "FAQ", href: "/#faq" },
+  { label: "Your match", href: "/dashboard" },
 ];
 
 export function SiteFooter() {
   return (
-    <footer className="bg-espresso py-14 text-paper">
-      <div className="mx-auto max-w-6xl px-5">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
-          <div>
-            <Logo className="[&_span]:text-paper" />
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-clay">
-              One good conversation a week, with someone who actually wanted to
-              have it.
+    <footer className="relative w-full bg-espresso px-6 pb-6 pt-12 md:px-12 md:pb-8 md:pt-16">
+      <div className="mx-auto flex w-full max-w-6xl flex-col justify-between gap-10 md:flex-row">
+        <div className="flex flex-col">
+          {/* the crashh speech bubble */}
+          <div className="relative inline-flex w-fit max-w-[300px] rounded-[18px] rounded-bl-[4px] bg-white px-4 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
+            <p className="text-[14px] font-medium leading-[1.25] tracking-tight text-black md:text-[15px]">
+              A friend that emails you one person worth meeting.
             </p>
+            <span
+              aria-hidden
+              className="absolute -bottom-[5px] left-[12px] h-3 w-3 rotate-45 bg-white"
+            />
           </div>
-          {COLUMNS.map((col) => (
-            <div key={col.title}>
-              <p className="font-display text-lg uppercase tracking-[0.18em] text-primary">
-                {col.title}
-              </p>
-              <ul className="mt-3 flex flex-col gap-2">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <Link
-                      href={l.href}
-                      className="text-sm text-clay transition-colors hover:text-paper"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+
+          <div className="mt-4">
+            <span className="font-display text-[40px] font-bold leading-none tracking-tight text-white md:text-[48px]">
+              brewed
+            </span>
+          </div>
         </div>
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-clay/25 pt-6 sm:flex-row">
-          <p className="text-xs text-clay">
-            © {new Date().getFullYear()} Brewed. Not affiliated with anyone
-            you&apos;ve heard of.
-          </p>
-          <p className="font-script text-lg text-primary">
-            go talk to someone ☕
-          </p>
+
+        <div className="flex flex-col items-start md:items-end">
+          <h3 className="text-[13px] font-medium text-white/40">Resources</h3>
+          <nav className="mt-4 flex flex-col items-start gap-3 md:items-end">
+            {RESOURCES.map((l) => (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="text-[14px] text-white transition-colors hover:text-white/70"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2 text-[13px] text-white md:mt-auto md:pt-10">
+            <span className="text-white/70">
+              © Brewed {new Date().getFullYear()}
+            </span>
+            <span className="font-script text-lg text-roast">
+              go talk to someone ☕
+            </span>
+          </div>
         </div>
       </div>
     </footer>

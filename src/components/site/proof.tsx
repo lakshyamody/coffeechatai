@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Eyebrow } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { liveStats } from "@/lib/store";
 
@@ -25,11 +24,13 @@ export async function Proof() {
   ];
 
   return (
-    <section className="border-b-2 border-ink bg-cream py-20">
+    <section className="py-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="text-center">
-          <Eyebrow>Where things actually stand</Eyebrow>
-          <h2 className="mt-3 font-display text-5xl leading-none text-ink sm:text-6xl">
+          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-roast">
+            Where things actually stand
+          </p>
+          <h2 className="headline mt-3 font-display text-5xl leading-none lowercase text-ink sm:text-6xl">
             {early ? "Nothing to brag about yet" : "Read straight off the database"}
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-bark">

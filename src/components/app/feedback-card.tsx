@@ -145,7 +145,7 @@ export function FeedbackCard({ matchName }: { matchName: string }) {
                   "rounded-full border-2 border-ink px-3 py-1 text-xs font-semibold transition-all",
                   tags.includes(t)
                     ? "bg-roast text-white"
-                    : "bg-white text-bark hover:-translate-y-0.5",
+                    : "bg-white/10 text-bark hover:-translate-y-0.5",
                 )}
               >
                 {t}

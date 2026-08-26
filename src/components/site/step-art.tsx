@@ -29,7 +29,7 @@ export function TagCloudPreview() {
             (t) => (
               <span
                 key={t}
-                className="rounded-full border-2 border-ink bg-white px-2 py-0.5 text-[0.65rem] font-semibold text-bark"
+                className="rounded-full border border-white/25 bg-white/10 px-2 py-0.5 text-[0.65rem] font-semibold text-bark"
               >
                 {t}
               </span>

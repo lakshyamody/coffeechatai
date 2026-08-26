@@ -2,22 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Logo } from "@/components/brand";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const LINKS = [
-  { href: "#how", label: "How it works" },
-  { href: "#matchmaker", label: "The matchmaker" },
-  { href: "#trust", label: "Safety" },
-  { href: "#faq", label: "FAQ" },
-];
-
+/**
+ * The crashh nav: fixed, transparent until you scroll, wordmark left and
+ * frosted pills right. The "join" pill fills white once the page moves.
+ */
 export function SiteNav() {
-  const [stuck, setStuck] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setStuck(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -26,43 +21,35 @@ export function SiteNav() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 transition-all",
-        stuck && "border-b-2 border-ink bg-cream/90 backdrop-blur-md",
+        "fixed inset-x-0 top-0 z-40 flex items-center justify-between px-6 transition-all duration-300 md:px-10",
+        scrolled ? "py-3 md:py-4" : "py-5 md:py-7",
       )}
     >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
-        <Link href="/" aria-label="Brewed home">
-          <Logo />
+      <Link
+        href="/"
+        className="font-display text-2xl font-bold tracking-tight text-white"
+      >
+        brewed <span aria-hidden>☕</span>
+      </Link>
+      <div className="flex items-center gap-2">
+        <Link
+          href="/login"
+          className="font-display glass-pill rounded-full px-5 py-2 text-base italic"
+        >
+          Log In
         </Link>
-
-        <div className="hidden items-center gap-7 md:flex">
-          {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-sm font-medium text-bark transition-colors hover:text-roast"
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            asChild
-            variant="ghost"
-            className="hidden font-semibold text-bark hover:bg-sand sm:inline-flex"
-          >
-            <Link href="/login">Log in</Link>
-          </Button>
-          <Button
-            asChild
-            className="sticker sticker-press h-10 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-ink hover:bg-primary"
-          >
-            <Link href="/login">Get matched</Link>
-          </Button>
-        </div>
-      </nav>
+        <Link
+          href="/login"
+          className={cn(
+            "font-display rounded-full border px-5 py-2 text-base italic backdrop-blur-md transition-colors",
+            scrolled
+              ? "border-white/60 bg-white/70 text-black shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] hover:bg-white/80"
+              : "glass-pill",
+          )}
+        >
+          Join Now
+        </Link>
+      </div>
     </header>
   );
 }
