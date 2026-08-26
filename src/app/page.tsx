@@ -10,6 +10,7 @@ import { Faq } from "@/components/site/faq";
 import { CtaBand } from "@/components/site/cta-band";
 import { SiteFooter } from "@/components/site/footer";
 import { ZigzagSection } from "@/components/site/fx";
+import { BackgroundVideo } from "@/components/site/background-video";
 import { liveStats } from "@/lib/store";
 import { closesAt, roundPhase, sendsAt, zoneAbbreviation } from "@/lib/schedule";
 
@@ -29,6 +30,9 @@ export default async function Home() {
         edge bites into the band above.
       */}
       <main className="paper-grain relative min-h-screen w-full overflow-x-clip">
+        {/* Primary hero backdrop; the blurred still remains the poster and
+            the reduced-motion fallback. */}
+        <BackgroundVideo src="/videos/background-1.mp4" poster="/landing_bg.jpg" />
         <ZigzagSection first>
           <Hero
             members={stats.members}
@@ -41,6 +45,7 @@ export default async function Home() {
         </ZigzagSection>
 
         <ZigzagSection className="paper-grain skyline-2">
+          <BackgroundVideo src="/videos/background-2.mp4" poster="/bg2.jpg" />
           <PinnedReveal />
         </ZigzagSection>
 

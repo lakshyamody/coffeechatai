@@ -242,6 +242,23 @@
     pointer-events: none;
   }
 
+
+  /*
+    While a background video is mounted in a band, the ::after overlay drops
+    its backdrop blur (which exists to soften the still image) and leans on a
+    slightly deeper plain gradient instead, so the video stays legible video
+    and the text keeps its scrim. Reduced-motion users never mount the video,
+    so they keep the blurred-still look untouched.
+  */
+  .paper-grain:has([data-bg-video])::after {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background:
+      radial-gradient(120% 80% at 50% 10%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 60%),
+      radial-gradient(80% 60% at 50% 90%, rgba(10, 15, 30, 0.7) 0%, rgba(10, 15, 30, 0) 70%),
+      linear-gradient(180deg, rgba(16, 22, 38, 0.5) 0%, rgba(12, 18, 32, 0.65) 100%);
+  }
+
   /* Variant backdrops for the deeper scroll sections. */
   .skyline-2 { background-color: #132042; }
   .skyline-2::before { background-image: url("/bg2.jpg"); background-position: center 55%; }
