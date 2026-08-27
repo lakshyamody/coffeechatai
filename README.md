@@ -85,7 +85,7 @@ calendars intersect at all. Roughly a third of pairs die here.
 | Reciprocity | 30% | `offers(A) ∩ seeks(B)` and the reverse, via a softened **harmonic mean** so a lopsided pairing can't score well on one side alone |
 | Resonance | 20% | **IDF-weighted cosine** over topics and goals — "quantum" counts far more than "LLM products" |
 | Complementarity | 14% | Seniority gap vs. what each side asked for, plus talker/listener balance |
-| Logistics | 14% | Timezone distance, format feasibility, and whether either side has a booking link |
+| Logistics | 14% | Timezone distance, plus whether both sides have a booking link (all chats are video calls) |
 | Character | 14% | Values overlap and personality fit, from the structured representation |
 | Serendipity | 8% | `4j(1−j)` over topic Jaccard — peaks at 50% overlap |
 
@@ -137,13 +137,14 @@ programme, which isn't self-serve, so members still paste their profile text.
 The button is hidden unless both values are present, so a half-configured
 deployment shows the code flow rather than a button that dead-ends.
 
-A password is optional on top of that: set one and you can sign straight in
-next time instead of waiting on an email. Hashed with scrypt and a per-password
-salt. New members are offered it at the end of onboarding rather than at
-sign-in, because until enrolment finishes there is no account to attach it to.
-A failed sign-in gives one generic message whether the account doesn't exist,
-has no password, or the password is wrong — anything more specific tells a
-stranger which emails are registered.
+Passwords are mandatory, and the door branches on the address: a new email
+verifies by code, then must set a password before onboarding; an existing
+account signs in by password, with the emailed code as the recovery path
+(which ends in setting a new password). Hashes are scrypt with per-password
+salts. A new member has no profile row until enrolment, so a freshly set
+password is parked keyed to the verified address and attached when the row is
+created. The lookup that branches the flow does reveal whether an address has
+an account — that is inherent to branching on it.
 
 **Email delivery is a hard dependency for the code path.** If the provider
 rejects the send — the usual cause being an unverified sending domain, which

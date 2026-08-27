@@ -1,6 +1,5 @@
 import type { Pairing, Profile, RoundResult, ScoreBreakdown } from "./types";
 import {
-  canMeet,
   dealBreakerBetween,
   explain,
   scorePair,
@@ -32,9 +31,8 @@ const pairKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 /**
  * Stage 1 — candidate generation.
  *
- * Cheap structural filters only: identity, blocks, history, deal-breakers,
- * and whether they can physically meet. Everything that survives is worth
- * paying for a full score.
+ * Cheap structural filters only: identity, blocks, history, and
+ * deal-breakers. Everything that survives is worth paying for a full score.
  *
  * At 64 people this is a rounding error, but it's the stage that keeps the
  * round tractable as the pool grows — full scoring is far more expensive
@@ -48,7 +46,6 @@ export function generateCandidates(pool: Profile[]): Array<[Profile, Profile]> {
       const b = pool[j];
       if (a.blocked.includes(b.id) || b.blocked.includes(a.id)) continue;
       if (a.history.includes(b.id) || b.history.includes(a.id)) continue;
-      if (!canMeet(a, b)) continue;
       if (dealBreakerBetween(a, b)) continue;
       candidates.push([a, b]);
     }

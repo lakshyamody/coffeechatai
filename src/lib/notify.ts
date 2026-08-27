@@ -26,8 +26,6 @@ export async function sendRoundEmails(
       [a, b],
       [b, a],
     ] as const) {
-      const inPerson =
-        me.city === them.city && me.format !== "virtual" && them.format !== "virtual";
       const record = await sendEmail({
         to: me.email,
         ...matchEmail({
@@ -42,7 +40,7 @@ export async function sendRoundEmails(
             detail: r.detail,
           })),
           bookingUrl: me === a ? pairing.booking.b : pairing.booking.a,
-          inPerson,
+          inPerson: false,
           dashboardUrl: `${origin}/dashboard`,
         }),
       });

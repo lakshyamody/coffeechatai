@@ -11,6 +11,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+/**
+ * The door decides which way you go:
+ *
+ *   new address        → verify by emailed code → set a password (required)
+ *                        → onboarding
+ *   existing account   → password sign-in ("email me a code" is the recovery
+ *                        path, and it ends in setting a new password)
+ *
+ * Nobody reaches onboarding without a verified address AND a password.
+ */
 type Stage = "email" | "password" | "code" | "set-password";
 
 export function LoginFlow({
@@ -30,7 +40,8 @@ export function LoginFlow({
   const [devCode, setDevCode] = useState<string | null>(null);
   const [delivery, setDelivery] = useState<string | null>(null);
   const [mailBlocked, setMailBlocked] = useState<string | null>(null);
-  const [nextPath, setNextPath] = useState("/dashboard");
+  const [isNew, setIsNew] = useState(true);
+  const [nextPath, setNextPath] = useState("/join");
 
   useEffect(() => {
     if (initialError) toast.error(initialError);
@@ -45,7 +56,57 @@ export function LoginFlow({
     return { res, data: await res.json() };
   };
 
-  /* --- password sign-in --------------------------------------------- */
+  const requestCode = async () => {
+    setBusy(true);
+    setMailBlocked(null);
+    try {
+      const { res, data } = await post("/api/auth/request", { email });
+      if (!res.ok) {
+        if (data.restricted) setMailBlocked(data.error);
+        else {
+          toast.error(data.error ?? "Couldn't send a code.");
+          return false;
+        }
+      }
+      setDevCode(data.devCode ?? null);
+      setDelivery(data.delivery ?? null);
+      setStage("code");
+      return true;
+    } catch {
+      toast.error("Couldn't reach the server.");
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  /* --- stage: email — look the address up, then branch ---------------- */
+  const submitEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const { res, data } = await post("/api/auth/lookup", { email });
+      if (!res.ok) {
+        toast.error(data.error ?? "Couldn't check that address.");
+        return;
+      }
+      if (data.exists && data.hasPassword) {
+        setIsNew(false);
+        setStage("password");
+      } else {
+        // Brand new, or a pre-password account: both verify by code first.
+        setIsNew(!data.exists);
+        setBusy(false);
+        await requestCode();
+      }
+    } catch {
+      toast.error("Couldn't reach the server.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  /* --- stage: password (existing members) ----------------------------- */
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
@@ -65,34 +126,7 @@ export function LoginFlow({
     }
   };
 
-  /* --- email a code -------------------------------------------------- */
-  const requestCode = async () => {
-    setBusy(true);
-    setMailBlocked(null);
-    try {
-      const { res, data } = await post("/api/auth/request", { email });
-      if (!res.ok) {
-        // Most likely the sending domain isn't verified yet, which is a
-        // configuration fact, not something the visitor did wrong.
-        if (data.restricted) setMailBlocked(data.error);
-        else toast.error(data.error ?? "Couldn't send a code.");
-        setStage("code");
-        return;
-      }
-      setDevCode(data.devCode ?? null);
-      setDelivery(data.delivery ?? null);
-      setStage("code");
-      toast.success(
-        data.delivery === "outbox" ? "Code generated." : `Code sent to ${data.email}.`,
-      );
-    } catch {
-      toast.error("Couldn't reach the server.");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  /* --- verify code --------------------------------------------------- */
+  /* --- stage: code ----------------------------------------------------- */
   const verify = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
@@ -102,18 +136,11 @@ export function LoginFlow({
         toast.error(data.error ?? "Couldn't verify that code.");
         return;
       }
-      setNextPath(data.next);
-      toast.success(data.enrolled ? "Welcome back." : "Email confirmed.");
-      if (data.enrolled) {
-        // Existing member: there's an account to attach a password to, so
-        // offer it now.
-        setStage("set-password");
-      } else {
-        // Brand new: no profile exists yet, so there is nothing to hang a
-        // password on. The offer moves to the end of onboarding.
-        router.push(data.next);
-        router.refresh();
-      }
+      setNextPath(data.enrolled ? "/dashboard" : "/join");
+      toast.success("Email confirmed.");
+      // Password is mandatory: new members set one, recovered members set a
+      // new one. Nobody skips this screen.
+      setStage("set-password");
     } catch {
       toast.error("Couldn't reach the server.");
     } finally {
@@ -121,17 +148,19 @@ export function LoginFlow({
     }
   };
 
-  /* --- set a password ------------------------------------------------ */
+  /* --- stage: set-password (required) ---------------------------------- */
   const savePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     try {
-      const { res, data } = await post("/api/auth/set-password", { password: newPassword });
+      const { res, data } = await post("/api/auth/set-password", {
+        password: newPassword,
+      });
       if (!res.ok) {
         toast.error(data.error ?? "Couldn't save that password.");
         return;
       }
-      toast.success("Password saved. Next time just use that.");
+      toast.success("Password set.");
       router.push(nextPath);
       router.refresh();
     } catch {
@@ -141,33 +170,21 @@ export function LoginFlow({
     }
   };
 
-  const skipPassword = () => {
-    router.push(nextPath);
-    router.refresh();
-  };
-
   return (
     <div className="mx-auto max-w-md px-5 py-14">
       <Link href="/" className="inline-block">
         <Logo />
       </Link>
 
-      {/* ---------------- email ---------------- */}
       {stage === "email" && (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setStage("password");
-          }}
-          className="mt-10"
-        >
+        <form onSubmit={submitEmail} className="mt-10">
           <CoffeeCup className="h-14 w-14" />
-          <h1 className="mt-5 font-display text-5xl leading-none text-ink">
+          <h1 className="headline font-display mt-5 text-5xl leading-none text-ink">
             Sign in
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-bark">
-            Confirm your address, connect LinkedIn, answer one question. After
-            that everything happens in your inbox — so use one you actually read.
+            Every chat happens over video and every update lands in your inbox
+            — so use an email you actually read.
           </p>
 
           <div className="mt-7 flex flex-col gap-1.5">
@@ -187,24 +204,23 @@ export function LoginFlow({
 
           <Button
             type="submit"
+            disabled={busy}
             className="sticker sticker-press mt-6 h-12 w-full rounded-xl bg-primary font-display text-xl tracking-wide text-primary-foreground hover:bg-primary"
           >
+            {busy ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
             Continue <ArrowRight className="ml-1 h-5 w-5" />
           </Button>
-
         </form>
       )}
 
-      {/* ---------------- password ---------------- */}
       {stage === "password" && (
         <form onSubmit={signIn} className="mt-10">
           <KeyRound className="h-14 w-14 text-roast" strokeWidth={1.6} />
-          <h1 className="mt-5 font-display text-5xl leading-none text-ink">
-            Enter your password
+          <h1 className="headline font-display mt-5 text-5xl leading-none text-ink">
+            Welcome back
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-bark">
-            Signing in as <strong className="text-ink">{email}</strong>. First time
-            here, or never set one? Use a code instead.
+            Signing in as <strong className="text-ink">{email}</strong>.
           </p>
 
           <div className="mt-7 flex flex-col gap-1.5">
@@ -231,36 +247,36 @@ export function LoginFlow({
             Sign in
           </Button>
 
-          <Button
+          <button
             type="button"
-            variant="ghost"
             disabled={busy}
             onClick={requestCode}
-            className="mt-3 h-11 w-full font-semibold text-bark hover:bg-sand"
+            className="mt-4 w-full text-sm font-semibold text-olive hover:text-roast"
           >
-            Email me a code instead
-          </Button>
+            Forgot your password? Email me a code
+          </button>
 
           <button
             type="button"
             onClick={() => setStage("email")}
-            className="mt-4 w-full text-sm font-semibold text-olive hover:text-roast"
+            className="mt-2 w-full text-sm font-semibold text-olive hover:text-roast"
           >
             Use a different email
           </button>
         </form>
       )}
 
-      {/* ---------------- code ---------------- */}
       {stage === "code" && (
         <form onSubmit={verify} className="mt-10">
           <MailCheck className="h-14 w-14 text-roast" strokeWidth={1.6} />
-          <h1 className="mt-5 font-display text-5xl leading-none text-ink">
+          <h1 className="headline font-display mt-5 text-5xl leading-none text-ink">
             Check your email
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-bark">
+            {isNew
+              ? "New here — first, prove the address is yours."
+              : "We'll verify it's you, then you'll set a new password."}{" "}
             We sent a six-digit code to <strong className="text-ink">{email}</strong>.
-            It expires in ten minutes.
           </p>
 
           {mailBlocked && (
@@ -269,11 +285,6 @@ export function LoginFlow({
                 That email couldn&apos;t be delivered
               </p>
               <p className="mt-1 text-sm leading-relaxed text-bark">{mailBlocked}</p>
-              <p className="mt-2 text-xs leading-relaxed text-olive">
-                This is a limit on our side, not on yours. Try an address
-                that&apos;s already received mail from us, or come back once the
-                cap lifts.
-              </p>
             </div>
           )}
 
@@ -286,12 +297,7 @@ export function LoginFlow({
                 Nothing was delivered. Your code is{" "}
                 <strong className="font-display text-xl tracking-widest text-ink">
                   {devCode}
-                </strong>{" "}
-                — also in the{" "}
-                <Link href="/outbox" className="font-semibold text-roast underline">
-                  outbox
-                </Link>
-                .
+                </strong>
               </p>
             </div>
           )}
@@ -341,21 +347,21 @@ export function LoginFlow({
         </form>
       )}
 
-      {/* ---------------- set a password ---------------- */}
       {stage === "set-password" && (
         <form onSubmit={savePassword} className="mt-10">
           <ShieldCheck className="h-14 w-14 text-matcha" strokeWidth={1.6} />
-          <h1 className="mt-5 font-display text-5xl leading-none text-ink">
-            Set a password?
+          <h1 className="headline font-display mt-5 text-5xl leading-none text-ink">
+            {isNew ? "Set your password" : "Set a new password"}
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-bark">
-            Optional. With one you can sign straight in next time instead of
-            waiting on an email. Codes keep working either way.
+            {isNew
+              ? "This is how you'll sign in from now on."
+              : "Your old one stops working the moment you save this."}
           </p>
 
           <div className="mt-7 flex flex-col gap-1.5">
             <Label className="text-xs font-bold uppercase tracking-wider text-olive">
-              New password
+              Password
             </Label>
             <Input
               type="password"
@@ -376,14 +382,6 @@ export function LoginFlow({
             {busy ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
             Save and continue
           </Button>
-
-          <button
-            type="button"
-            onClick={skipPassword}
-            className="mt-4 w-full text-sm font-semibold text-olive hover:text-roast"
-          >
-            Skip — I&apos;ll use email codes
-          </button>
         </form>
       )}
     </div>

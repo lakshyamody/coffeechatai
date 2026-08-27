@@ -143,29 +143,19 @@ export function complementarity(a: Profile, b: Profile): number {
   return 0.55 * senior + 0.25 * talkBalance + 0.2 * agendaAlign;
 }
 
-export function canMeet(a: Profile, b: Profile): boolean {
-  if (a.format === "in-person" && b.format === "in-person") return a.city === b.city;
-  if (a.format === "in-person") return b.format !== "virtual" && a.city === b.city;
-  if (b.format === "in-person") return a.format !== "virtual" && a.city === b.city;
-  return true;
-}
-
 export function logistics(a: Profile, b: Profile): number {
-  // We no longer keep a copy of anyone's calendar — people book each other
-  // through their own booking link. What's left that genuinely predicts
-  // whether a chat happens is whether the clock is against them, whether the
-  // format works, and whether booking is one click or an email thread.
-  const sameCity = a.city === b.city;
+  // Every chat is a video call and a booking link is required at signup, so
+  // what's left that predicts whether a chat happens is the clock: a pair
+  // twelve hours apart has two bad options, a pair two hours apart has an
+  // easy overlap. The booking term only matters for members who joined
+  // before links were mandatory.
   const tzGap = Math.abs(a.utcOffset - b.utcOffset);
-  const timezone = sameCity ? 1 : Math.exp(-(tzGap * tzGap) / 50);
-
-  const format =
-    sameCity && a.format !== "virtual" && b.format !== "virtual" ? 1 : 0.85;
+  const timezone = Math.exp(-(tzGap * tzGap) / 50);
 
   const links = [a.calendlyUrl, b.calendlyUrl].filter(Boolean).length;
   const booking = links === 2 ? 1 : links === 1 ? 0.7 : 0.4;
 
-  return Math.min(1, 0.5 * timezone + 0.2 * format + 0.3 * booking);
+  return Math.min(1, 0.65 * timezone + 0.35 * booking);
 }
 
 export function serendipity(a: Profile, b: Profile): number {
@@ -273,7 +263,6 @@ export function scorePair(a: Profile, b: Profile): ScoreBreakdown | null {
   if (a.id === b.id) return null;
   if (a.blocked.includes(b.id) || b.blocked.includes(a.id)) return null;
   if (a.history.includes(b.id) || b.history.includes(a.id)) return null;
-  if (!canMeet(a, b)) return null;
   if (dealBreakerBetween(a, b)) return null;
 
   const parts = {
@@ -392,18 +381,10 @@ export function explain(
     const tzGap = Math.abs(a.utcOffset - b.utcOffset);
     reasons.push({
       kind: "logistics",
-      label:
-        a.city === b.city
-          ? `${second ? "You're both" : "Both"} in ${a.city}`
-          : bothBook
-            ? "Easy to book"
-            : "Workable hours",
-      detail:
-        a.city === b.city
-          ? `Same city, so this can be a real cafe if ${second ? "you" : "they"} want it.`
-          : bothBook
-            ? `${tzGap === 0 ? "Same timezone" : `${tzGap} hours apart`}, and you both have a booking link — one click, no scheduling thread.`
-            : `${tzGap === 0 ? "Same timezone" : `Only ${tzGap} hours apart`}, so finding an hour is straightforward.`,
+      label: bothBook ? "Easy to book" : "Workable hours",
+      detail: bothBook
+        ? `${tzGap === 0 ? "Same timezone" : `${tzGap} hours apart`}, and you both have a booking link — one click, no scheduling thread.`
+        : `${tzGap === 0 ? "Same timezone" : `Only ${tzGap} hours apart`}, so finding an hour is straightforward.`,
     });
   }
 

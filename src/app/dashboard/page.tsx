@@ -9,7 +9,6 @@ import { closesAt, roundPhase, sendsAt, zoneAbbreviation } from "@/lib/schedule"
 import { Countdown } from "@/components/site/countdown";
 import { pairingFor } from "@/lib/matching";
 import { explain, starters } from "@/lib/scoring";
-import { cityByName } from "@/lib/cities";
 import type { Profile } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +23,6 @@ const toReveal = (p: Profile): RevealPerson => ({
   city: p.city,
   avatarSeed: p.avatarSeed,
   calendlyUrl: p.calendlyUrl ?? null,
-  format: p.format,
 });
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -111,7 +109,6 @@ export default async function DashboardPage() {
 
   // --- Enrolled but unmatched: say why, honestly ---
   if (!pairing) {
-    const cityWeight = cityByName(me.city)?.weight ?? 0;
     const poolSize = await profileCount();
     const hardNoes = me.structured?.dealBreakers.length ?? 0;
     const causes: string[] = [];
@@ -125,11 +122,6 @@ export default async function DashboardPage() {
         `There are ${poolSize} people in the pool. That's not enough for the matcher to find anyone worth your time, so it held you over rather than inventing a match.`,
       );
     } else {
-      if (me.format === "in-person" && cityWeight < 5) {
-        causes.push(
-          `You're in-person only, so we can only look at people in ${me.city}. There aren't enough of them yet.`,
-        );
-      }
       if (!me.calendlyUrl) {
         causes.push(
           "You haven't added a booking link. It isn't required, but a chat someone can book in one click is far likelier to happen than one that needs a scheduling thread.",

@@ -53,8 +53,8 @@ const QUESTIONS = [
     a: "Block them and you'll never be matched again, in either direction. You can also block an entire company — useful if you'd rather not be paired with your own colleagues or a competitor.",
   },
   {
-    q: "I'm in-person only and got nothing. Why?",
-    a: "You can only meet people in your city, and if there aren't enough members there yet, we'd rather tell you than invent a bad match. Switch to video, or stay in-person and we'll match you the week the density is there.",
+    q: "Where do the chats happen?",
+    a: "Over video, booked through your match's own calendar link — that's why the link is required at signup. No venue to agree on, no commute, and the pool isn't limited to your city.",
   },
   {
     q: "Is this a job board?",

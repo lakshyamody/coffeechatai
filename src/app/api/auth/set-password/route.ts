@@ -10,6 +10,7 @@ import {
   readSession,
 } from "@/lib/auth";
 import { getProfile, getProfileByEmail, upsertProfile } from "@/lib/store";
+import { setMeta } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -41,17 +42,27 @@ export async function POST(request: Request) {
       ? await getProfileByEmail(normaliseEmail(pending))
       : null;
 
-  if (!profile) {
-    return NextResponse.json(
-      { error: "Verify your email before setting a password." },
-      { status: 401 },
-    );
+  if (profile) {
+    await upsertProfile({ ...profile, passwordHash: await hashPassword(password) });
+    const response = NextResponse.json({ ok: true, enrolled: true });
+    // Setting a password from the post-verification screen also signs you in.
+    response.cookies.set(SESSION_COOKIE, issueSession(profile.id), SESSION_COOKIE_OPTIONS);
+    return response;
   }
 
-  await upsertProfile({ ...profile, passwordHash: await hashPassword(password) });
+  if (pending) {
+    // Verified address, no profile yet: the password is now mandatory before
+    // onboarding, but there is no row to hang it on until enrolment creates
+    // one. Park the hash keyed by the proven address; enroll picks it up.
+    await setMeta(
+      `pendingpw:${normaliseEmail(pending)}`,
+      await hashPassword(password),
+    );
+    return NextResponse.json({ ok: true, enrolled: false });
+  }
 
-  const response = NextResponse.json({ ok: true });
-  // Setting a password from the post-verification screen also signs you in.
-  response.cookies.set(SESSION_COOKIE, issueSession(profile.id), SESSION_COOKIE_OPTIONS);
-  return response;
+  return NextResponse.json(
+    { error: "Verify your email before setting a password." },
+    { status: 401 },
+  );
 }

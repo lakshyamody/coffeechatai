@@ -286,9 +286,7 @@ export function matchEmail(opts: {
       `<div style="margin:0 0 16px;padding:14px;background:${CREAM};border-radius:12px">
          <div style="font-size:19px;font-weight:800">${opts.matchName}</div>
          <div style="font-size:14px;color:${OLIVE};margin-top:2px">${opts.matchHeadline}</div>
-         <div style="font-size:14px;color:${OLIVE};margin-top:2px">${
-           opts.inPerson ? `Café in ${opts.matchCity}` : `Video — they're in ${opts.matchCity}`
-         }</div>
+         <div style="font-size:14px;color:${OLIVE};margin-top:2px">Video call — they're in ${opts.matchCity}</div>
          <div style="margin-top:10px;font-size:14px">
            <a href="mailto:${opts.matchEmail}" style="color:${ROAST};font-weight:700;text-decoration:none">${opts.matchEmail}</a>
          </div>

@@ -8,7 +8,6 @@ import {
   Copy,
   ExternalLink,
   Mail,
-  MapPin,
   MessageSquareQuote,
   Video,
 } from "lucide-react";
@@ -30,7 +29,6 @@ export interface RevealPerson {
   city: string;
   avatarSeed: number;
   calendlyUrl: string | null;
-  format: string;
   /** One-line read from the structured profile, when it exists. */
   summary?: string;
 }
@@ -65,8 +63,6 @@ export function MatchReveal({
   const myBooking = me.calendlyUrl ?? booking.a ?? null;
   const [busy, setBusy] = useState(false);
 
-  const inPerson =
-    me.city === them.city && me.format !== "virtual" && them.format !== "virtual";
 
   const skipWeek = async () => {
     setBusy(true);
@@ -120,8 +116,8 @@ export function MatchReveal({
             </p>
           )}
           <p className="mt-1 flex items-center justify-center gap-1 text-xs font-semibold text-olive">
-            {inPerson ? <MapPin className="h-3.5 w-3.5" /> : <Video className="h-3.5 w-3.5" />}
-            {inPerson ? `Café in ${them.city}` : `Video · they're in ${them.city}`}
+            <Video className="h-3.5 w-3.5" />
+            {`Video call · they're in ${them.city}`}
           </p>
 
           <div className="mt-5 flex justify-center">

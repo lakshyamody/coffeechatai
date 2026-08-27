@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import type { Direction, Format, Profile, Seniority } from "@/lib/types";
+import type { Direction, Profile, Seniority } from "@/lib/types";
 import {
   allProfiles,
   getProfile,
@@ -13,6 +13,7 @@ import {
 } from "@/lib/store";
 import { rankAgainstPool } from "@/lib/matching";
 import { normaliseBookingUrl } from "@/lib/booking";
+import { T, exec, getMeta } from "@/lib/db";
 import { extractProfile } from "@/lib/extractor";
 import { sendEmail, welcomeEmail } from "@/lib/email";
 import { cityByName } from "@/lib/cities";
@@ -32,13 +33,9 @@ interface Draft {
   linkedinUrl?: string;
   linkedinText?: string;
   wantToMeet?: string;
-  /** Optional refinements; sensible defaults are used when absent. */
   calendlyUrl?: string;
-  format?: string;
   city?: string;
 }
-
-const FORMATS: Format[] = ["virtual", "in-person", "either"];
 
 const text = (v: unknown, max = 6000) =>
   typeof v === "string" ? v.trim().slice(0, max) : "";
@@ -84,6 +81,19 @@ export async function POST(request: Request) {
     );
   }
 
+  // Chats are video calls booked through your link, so the link is the one
+  // piece of logistics that is not optional.
+  const calendlyUrl = normaliseBookingUrl(text(draft.calendlyUrl ?? "", 300));
+  if (!calendlyUrl) {
+    return NextResponse.json(
+      {
+        error:
+          "Add your booking link (Calendly, Cal.com, …) — matches book you through it.",
+      },
+      { status: 422 },
+    );
+  }
+
   // One model call replaces the nine screens this used to be: it reads the
   // LinkedIn text and the answer, and produces the tags, seniority and
   // structured profile the matcher scores on.
@@ -95,12 +105,18 @@ export async function POST(request: Request) {
   });
 
   const existing = sessionProfile ?? (await getProfileByEmail(email));
+
+  // Password became mandatory before onboarding: either the account already
+  // has one, or the just-verified flow parked one for this address.
+  const pendingPw = await getMeta(`pendingpw:${email}`);
+  if (!existing?.passwordHash && !pendingPw) {
+    return NextResponse.json(
+      { error: "Set a password before joining a round." },
+      { status: 401 },
+    );
+  }
+
   const city = text(draft.city, 80) || fields.city || existing?.city || "Remote";
-  const calendlyUrl =
-    normaliseBookingUrl(text(draft.calendlyUrl ?? "", 300)) ?? existing?.calendlyUrl;
-  const format = FORMATS.includes(draft.format as Format)
-    ? (draft.format as Format)
-    : (existing?.format ?? "either");
 
   // LinkedIn proved the name; prefer it over anything guessed from the paste.
   let linkedin: { sub?: string; name?: string } = {};
@@ -125,7 +141,8 @@ export async function POST(request: Request) {
     seniority: Math.min(4, Math.max(0, Math.round(fields.seniority))) as Seniority,
     city,
     utcOffset: cityByName(city)?.offset ?? existing?.utcOffset ?? 0,
-    format,
+    // Every chat is a video call; the field survives for old data only.
+    format: "virtual",
     goals: fields.goals,
     offers: fields.offers,
     seeks: fields.seeks,
@@ -145,9 +162,11 @@ export async function POST(request: Request) {
     structured,
     linkedinUrl: linkedinUrl || existing?.linkedinUrl,
     linkedinSub: linkedin.sub ?? existing?.linkedinSub,
+    passwordHash: existing?.passwordHash ?? pendingPw ?? undefined,
   };
 
   await upsertProfile(profile);
+  if (pendingPw) await exec(`DELETE FROM ${T}meta WHERE key = ?`, [`pendingpw:${email}`]);
   invalidateRound();
 
   await sendEmail({

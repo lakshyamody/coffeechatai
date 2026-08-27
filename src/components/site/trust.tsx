@@ -14,8 +14,8 @@ const ITEMS = [
   },
   {
     icon: Building2,
-    title: "public places, or video",
-    body: "In-person chats are cafés and lobbies, never homes. Prefer video? Say so once and we'll never suggest anything else. Block a company or a person and they're gone.",
+    title: "video calls, on your terms",
+    body: "Every chat is a video call booked through your own link — nobody gets your address, your office, or your phone number. Block a company or a person and they're gone.",
   },
 ];
 

@@ -5,7 +5,6 @@ import { useState } from "react";
 import {
   ArrowRight,
   ChevronDown,
-  KeyRound,
   BriefcaseBusiness,
   Loader2,
   PartyPopper,
@@ -15,7 +14,6 @@ import {
 import { toast } from "sonner";
 
 import { Avatar, Logo } from "@/components/brand";
-import { TagGrid } from "@/components/app/tag-grid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,12 +40,6 @@ interface Derived {
   direction: string;
 }
 
-const FORMAT_OPTIONS = [
-  { id: "either", label: "Either works", detail: "Café if we're close, video if not." },
-  { id: "virtual", label: "Video only", detail: "Match me anywhere in the world." },
-  { id: "in-person", label: "In person only", detail: "Only people in my city." },
-];
-
 export function JoinFlow({
   verifiedEmail,
   roundNumber,
@@ -67,7 +59,6 @@ export function JoinFlow({
   const [wantToMeet, setWantToMeet] = useState("");
   const [showMore, setShowMore] = useState(false);
   const [city, setCity] = useState("");
-  const [format, setFormat] = useState("either");
   const [calendlyUrl, setCalendlyUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{
@@ -77,7 +68,10 @@ export function JoinFlow({
     source: string;
   } | null>(null);
 
-  const ready = wantToMeet.trim().length >= 10 && (connected || linkedinText.trim().length >= 20 || linkedinUrl.trim());
+  const ready =
+    wantToMeet.trim().length >= 10 &&
+    calendlyUrl.trim().length > 4 &&
+    (connected || linkedinText.trim().length >= 20 || linkedinUrl.trim());
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +85,6 @@ export function JoinFlow({
           linkedinText,
           wantToMeet,
           city: city || undefined,
-          format,
           calendlyUrl,
         }),
       });
@@ -158,20 +151,6 @@ export function JoinFlow({
             <Phrases label="Values" items={structured.values} />
           </div>
 
-          {structured.personality && (
-            <div className="mt-4 border-t-2 border-dashed border-sand pt-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-olive">
-                How you come across
-              </p>
-              <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                <Trait label="Sticks to the known" right="Chases novelty" value={structured.personality.openness} />
-                <Trait label="Reserved" right="Outgoing" value={structured.personality.energy} />
-                <Trait label="Diplomatic" right="Blunt" value={structured.personality.directness} />
-                <Trait label="Improvises" right="Comes with an agenda" value={structured.personality.structure} />
-              </div>
-            </div>
-          )}
-
           <div className="mt-4 border-t-2 border-dashed border-sand pt-3">
             <p className="text-xs font-bold uppercase tracking-wider text-olive">
               What the matcher scores on
@@ -230,8 +209,6 @@ export function JoinFlow({
             </div>
           </>
         )}
-
-        <SetPasswordCard />
 
         <p className="mt-8 text-sm text-olive">
           If you ever want to change your answer or opt out of a week, it&apos;s
@@ -379,6 +356,27 @@ About: I work on payments reliability — mostly the ledger path and the things 
         />
       </section>
 
+      {/* booking link — required: every chat is a video call booked through it */}
+      <section className="sticker-lg mt-5 rounded-2xl p-5">
+        <h2 className="headline font-display text-2xl tracking-tight text-ink">
+          Your booking link
+        </h2>
+        <p className="mt-1 text-sm leading-relaxed text-bark">
+          Chats are video calls, and your match books one straight into your
+          calendar through this. Required — without it there&apos;s nothing for
+          them to book.
+        </p>
+        <Input
+          value={calendlyUrl}
+          onChange={(e) => setCalendlyUrl(e.target.value)}
+          placeholder="calendly.com/yourname/30min"
+          className="sticker mt-3 h-11 rounded-lg focus-visible:ring-0"
+        />
+        <p className="mt-2 text-xs leading-relaxed text-olive">
+          {SUPPORTED_BOOKING_HOSTS.slice(0, 4).join(", ")} and a few others work.
+        </p>
+      </section>
+
       {/* optional refinements */}
       <button
         type="button"
@@ -386,8 +384,8 @@ About: I work on payments reliability — mostly the ledger path and the things 
         className="mt-5 flex w-full items-center justify-between rounded-xl border-2 border-dashed border-sand px-4 py-3 text-left"
       >
         <span className="text-sm font-semibold text-bark">
-          Booking link, city and format{" "}
-          <span className="font-normal text-olive">— optional, but a link means they can just book you</span>
+          City{" "}
+          <span className="font-normal text-olive">— optional, sharpens timezone matching</span>
         </span>
         <ChevronDown
           className={`h-4 w-4 shrink-0 text-olive transition-transform ${showMore ? "rotate-180" : ""}`}
@@ -395,39 +393,15 @@ About: I work on payments reliability — mostly the ledger path and the things 
       </button>
 
       {showMore && (
-        <div className="mt-4 flex flex-col gap-5">
-          <div className="flex flex-col gap-1.5">
-            <Label className="text-xs font-bold uppercase tracking-wider text-olive">
-              Booking link
-            </Label>
-            <Input
-              value={calendlyUrl}
-              onChange={(e) => setCalendlyUrl(e.target.value)}
-              placeholder="calendly.com/yourname/30min"
-              className="sticker h-11 rounded-lg focus-visible:ring-0"
-            />
-            <p className="text-xs leading-relaxed text-olive">
-              Your match books straight into your own calendar — no availability
-              for us to keep, and nothing to keep up to date.{" "}
-              {SUPPORTED_BOOKING_HOSTS.slice(0, 4).join(", ")} and a few others.
-            </p>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label className="text-xs font-bold uppercase tracking-wider text-olive">
-              City
-            </Label>
-            <Input
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="Bangalore"
-              className="sticker h-11 rounded-lg focus-visible:ring-0"
-            />
-          </div>
-          <TagGrid
-            options={FORMAT_OPTIONS}
-            value={[format]}
-            onChange={(v) => setFormat(v.find((x) => x !== format) ?? format)}
-            columns={3}
+        <div className="mt-4 flex flex-col gap-1.5">
+          <Label className="text-xs font-bold uppercase tracking-wider text-olive">
+            City
+          </Label>
+          <Input
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Bangalore"
+            className="sticker h-11 rounded-lg focus-visible:ring-0"
           />
         </div>
       )}
@@ -482,32 +456,6 @@ function Phrases({ label, items }: { label: string; items?: string[] }) {
   );
 }
 
-/** The extractor estimates these; showing them lets someone correct a bad read. */
-function Trait({
-  label,
-  right,
-  value,
-}: {
-  label: string;
-  right: string;
-  value: number;
-}) {
-  return (
-    <div>
-      <div className="h-2 overflow-hidden rounded-full border-2 border-ink bg-cream">
-        <div
-          className="h-full rounded-full bg-roast transition-all"
-          style={{ width: `${Math.round(value * 100)}%` }}
-        />
-      </div>
-      <div className="mt-0.5 flex justify-between text-[0.65rem] leading-tight text-olive">
-        <span>{label}</span>
-        <span>{right}</span>
-      </div>
-    </div>
-  );
-}
-
 function TagList({ title, ids }: { title: string; ids: string[] }) {
   if (!ids?.length) return null;
   return (
@@ -527,78 +475,3 @@ function TagList({ title, ids }: { title: string; ids: string[] }) {
   );
 }
 
-/**
- * Offered here rather than during sign-in: a brand new member has no account
- * until enrolment finishes, so there is nothing to attach a password to until
- * this point.
- */
-function SetPasswordCard() {
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  if (saved) {
-    return (
-      <div className="sticker mt-8 flex items-center gap-2 rounded-xl p-4 text-left">
-        <KeyRound className="h-4 w-4 shrink-0 text-matcha" />
-        <p className="text-sm text-bark">
-          Password saved. Next time, sign in with your email and password.
-        </p>
-      </div>
-    );
-  }
-
-  const save = async () => {
-    setBusy(true);
-    try {
-      const res = await fetch("/api/auth/set-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.error ?? "Couldn't save that password.");
-        return;
-      }
-      setSaved(true);
-    } catch {
-      toast.error("Couldn't reach the server.");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <div className="sticker mt-8 rounded-xl p-5 text-left">
-      <div className="flex items-center gap-2">
-        <KeyRound className="h-4 w-4 text-roast" />
-        <p className="text-xs font-bold uppercase tracking-wider text-olive">
-          Optional — set a password
-        </p>
-      </div>
-      <p className="mt-1.5 text-sm leading-relaxed text-bark">
-        So you can sign straight back in instead of waiting on an email.
-      </p>
-      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-        <Input
-          type="password"
-          autoComplete="new-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="at least 8 characters"
-          className="sticker h-11 rounded-lg focus-visible:ring-0"
-        />
-        <Button
-          type="button"
-          onClick={save}
-          disabled={busy || password.length < 8}
-          className="sticker sticker-press h-11 shrink-0 rounded-lg bg-primary px-5 font-display text-lg tracking-wide text-primary-foreground hover:bg-primary disabled:opacity-45"
-        >
-          {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          Save
-        </Button>
-      </div>
-    </div>
-  );
-}
