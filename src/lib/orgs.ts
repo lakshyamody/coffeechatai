@@ -48,8 +48,8 @@ export const SINGAPORE_SCHOOLS: Org[] = [
 
 export const INDIA_SCHOOLS: Org[] = [
   { name: "IIT Bombay", city: "Mumbai", kind: "school", marquee: true, domain: "iitb.ac.in" },
-  { name: "IIT Delhi", city: "Delhi", kind: "school", marquee: true, domain: "iitd.ac.in" },
-  { name: "IIT Madras", city: "Chennai", kind: "school", marquee: true, domain: "iitm.ac.in" },
+  { name: "IIT Delhi", city: "Delhi", kind: "school", marquee: true, domain: "www.iitd.ac.in" },
+  { name: "IIT Madras", city: "Chennai", kind: "school", marquee: true, domain: "www.iitm.ac.in" },
   { name: "IIT Kanpur", city: "Kanpur", kind: "school", domain: "iitk.ac.in" },
   { name: "IIT Kharagpur", city: "Kolkata", kind: "school", domain: "iitkgp.ac.in" },
   { name: "IISc Bangalore", city: "Bangalore", kind: "school", marquee: true, domain: "iisc.ac.in" },
@@ -158,9 +158,41 @@ const MARQUEE_NAMES = [
 export interface MarqueeOrg {
   name: string;
   domain?: string;
+  /** Local mark — university seals and brand icons, not favicon scraps. */
+  logo?: string;
 }
+
+const MARQUEE_LOGOS: Record<string, string> = {
+  "Y Combinator": "/org-logos/ycombinator.svg",
+  Stanford: "/org-logos/stanford.png",
+  NUS: "/org-logos/nus.png",
+  "IIT Bombay": "/org-logos/iit-bombay.png",
+  Harvard: "/org-logos/harvard.png",
+  Stripe: "/org-logos/stripe.svg",
+  "IISc Bangalore": "/org-logos/iisc.png",
+  MIT: "/org-logos/mit.png",
+  Grab: "/org-logos/grab.svg",
+  Cornell: "/org-logos/cornell.png",
+  "NTU Singapore": "/org-logos/ntu.png",
+  Anthropic: "/org-logos/anthropic.svg",
+  "IIT Delhi": "/org-logos/iit-delhi.png",
+  Figma: "/org-logos/figma.svg",
+  "UC Berkeley": "/org-logos/berkeley.png",
+  "BITS Pilani": "/org-logos/bits-pilani.png",
+  Princeton: "/org-logos/princeton.png",
+  Razorpay: "/org-logos/razorpay.svg",
+  "IIIT Hyderabad": "/org-logos/iiit-hyderabad.png",
+  Waterloo: "/org-logos/waterloo.png",
+  "Carnegie Mellon": "/org-logos/cmu.png",
+  "IIT Madras": "/org-logos/iit-madras.png",
+  Columbia: "/org-logos/columbia.png",
+  Ramp: "/org-logos/ramp.png",
+  UPenn: "/org-logos/upenn.png",
+  "Georgia Tech": "/org-logos/gatech.png",
+};
 
 export const MARQUEE_ORGS: MarqueeOrg[] = MARQUEE_NAMES.map((name) => ({
   name,
   domain: orgByName(name)?.domain,
+  logo: MARQUEE_LOGOS[name],
 }));
