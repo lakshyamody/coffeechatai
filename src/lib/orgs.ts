@@ -169,7 +169,7 @@ const MARQUEE_LOGOS: Record<string, string> = {
   "IIT Bombay": "/org-logos/iit-bombay.png",
   Harvard: "/org-logos/harvard.png",
   Stripe: "/org-logos/stripe.svg",
-  "IISc Bangalore": "/org-logos/iisc.png",
+  "IISc Bangalore": "/org-logos/iisc.svg",
   MIT: "/org-logos/mit.png",
   Grab: "/org-logos/grab.svg",
   Cornell: "/org-logos/cornell.png",
@@ -186,7 +186,7 @@ const MARQUEE_LOGOS: Record<string, string> = {
   "Carnegie Mellon": "/org-logos/cmu.png",
   "IIT Madras": "/org-logos/iit-madras.png",
   Columbia: "/org-logos/columbia.png",
-  Ramp: "/org-logos/ramp.png",
+  Ramp: "/org-logos/ramp.svg",
   UPenn: "/org-logos/upenn.png",
   "Georgia Tech": "/org-logos/gatech.png",
 };
