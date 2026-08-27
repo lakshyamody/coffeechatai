@@ -6,6 +6,7 @@ import { allProfiles, currentRound, getRoundNumber } from "@/lib/store";
 import { WEIGHTS } from "@/lib/scoring";
 import { adminTokenConfigured, isOperator } from "@/lib/admin";
 import { OperatorLocked } from "@/components/app/operator-locked";
+import { SiteBackdrop } from "@/components/site/background-video";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Matching lab | Crashh" };
@@ -56,6 +57,7 @@ export default async function LabPage({ searchParams }: PageProps<"/lab">) {
 
   return (
     <main className="paper-grain min-h-screen pb-20">
+      <SiteBackdrop />
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 pt-8">
         <Link href="/">
           <Logo />

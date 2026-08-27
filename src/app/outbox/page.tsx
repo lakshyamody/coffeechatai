@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { emailConfigured, outbox, transportLabel } from "@/lib/email";
 import { adminTokenConfigured, isOperator, redactCodes } from "@/lib/admin";
 import { OperatorLocked } from "@/components/app/operator-locked";
+import { SiteBackdrop } from "@/components/site/background-video";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Outbox | Crashh" };
@@ -37,6 +38,7 @@ export default async function OutboxPage({ searchParams }: PageProps<"/outbox">)
 
   return (
     <main className="paper-grain min-h-screen pb-20">
+      <SiteBackdrop />
       <div className="mx-auto flex max-w-3xl items-center justify-between px-5 pt-8">
         <Link href="/">
           <Logo />

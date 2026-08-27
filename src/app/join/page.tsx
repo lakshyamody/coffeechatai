@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { JoinFlow } from "@/components/app/join-flow";
+import { SiteBackdrop } from "@/components/site/background-video";
 import { getRoundNumber } from "@/lib/store";
 import { SESSION_COOKIE, readSession } from "@/lib/auth";
 import { LINKEDIN_PENDING_COOKIE, linkedinConfigured } from "@/lib/linkedin";
@@ -35,6 +36,7 @@ export default async function JoinPage() {
 
   return (
     <main className="paper-grain min-h-screen">
+      <SiteBackdrop />
       <JoinFlow
         verifiedEmail={email}
         roundNumber={await getRoundNumber()}

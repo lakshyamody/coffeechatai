@@ -75,3 +75,11 @@ export function BackgroundVideo({
     />
   );
 }
+
+export function SiteBackdrop({
+  poster = "/landing_bg.jpg",
+}: {
+  poster?: string;
+}) {
+  return <BackgroundVideo src="/videos/background-1.mp4" poster={poster} />;
+}

@@ -10,7 +10,7 @@ import { Faq } from "@/components/site/faq";
 import { CtaBand } from "@/components/site/cta-band";
 import { SiteFooter } from "@/components/site/footer";
 import { ZigzagSection } from "@/components/site/fx";
-import { BackgroundVideo } from "@/components/site/background-video";
+import { BackgroundVideo, SiteBackdrop } from "@/components/site/background-video";
 import { liveStats } from "@/lib/store";
 import { closesAt, roundPhase, sendsAt, zoneAbbreviation } from "@/lib/schedule";
 
@@ -45,7 +45,7 @@ export default async function Home() {
         </ZigzagSection>
 
         <ZigzagSection className="paper-grain skyline-2">
-          <BackgroundVideo src="/videos/background-2.mp4" poster="/bg2.jpg" />
+          <SiteBackdrop poster="/bg2.jpg" />
           <PinnedReveal />
         </ZigzagSection>
 
@@ -54,6 +54,7 @@ export default async function Home() {
         </ZigzagSection>
 
         <ZigzagSection className="paper-grain skyline-4">
+          <SiteBackdrop poster="/bg4.jpg" />
           <Matchmaker />
         </ZigzagSection>
 

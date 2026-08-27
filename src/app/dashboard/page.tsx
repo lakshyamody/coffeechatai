@@ -7,6 +7,7 @@ import { currentRound, getProfile, getRoundNumber, profileCount } from "@/lib/st
 import { currentProfile } from "@/lib/session";
 import { closesAt, roundPhase, sendsAt, zoneAbbreviation } from "@/lib/schedule";
 import { Countdown } from "@/components/site/countdown";
+import { SiteBackdrop } from "@/components/site/background-video";
 import { pairingFor } from "@/lib/matching";
 import { explain, starters } from "@/lib/scoring";
 import type { Profile } from "@/lib/types";
@@ -29,6 +30,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   const phase = roundPhase();
   return (
     <main className="paper-grain min-h-screen">
+      <SiteBackdrop />
       <div className="border-b-2 border-ink bg-primary/25 px-5 py-2 text-center">
         <Countdown
           className="text-xs font-semibold text-bark"

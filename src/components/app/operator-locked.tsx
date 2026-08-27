@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import { Logo } from "@/components/brand";
+import { SiteBackdrop } from "@/components/site/background-video";
 
 export function OperatorLocked({
   what,
@@ -11,6 +12,7 @@ export function OperatorLocked({
 }) {
   return (
     <main className="paper-grain grid min-h-screen place-items-center px-5 py-16">
+      <SiteBackdrop />
       <div className="w-full max-w-md text-center">
         <Link href="/" className="inline-block">
           <Logo />
