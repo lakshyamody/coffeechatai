@@ -11,7 +11,6 @@ import { SunBurst } from "@/components/site/fx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MARQUEE_ORGS } from "@/lib/orgs";
-import { sendsAt } from "@/lib/schedule";
 
 export function Hero({
   members,
@@ -44,12 +43,14 @@ export function Hero({
         className="relative flex flex-col items-center"
       >
         <SunBurst />
-        <h1 className="headline font-display relative z-10 -mt-2 text-center text-[52px] leading-[1.05] tracking-tight text-white md:text-[76px] 2xl:text-[92px]">
-          <span className="block">meet people</span>
-          <span className="block">
-            who&apos;ll <em className="italic">change you</em>
-          </span>
+        <h1 className="headline font-display relative z-10 -mt-2 text-center text-[44px] leading-[1.05] tracking-tight text-white md:text-[68px] 2xl:text-[84px]">
+          <span className="block">Crashh into people</span>
+          <span className="block italic">changing the world.</span>
         </h1>
+        <p className="relative z-10 mt-5 max-w-xl text-center text-sm leading-relaxed text-white/75 md:text-base">
+          One meaningful coffee chat, every Wednesday—with the founders, builders,
+          creatives, and thinkers turning ambitious ideas into real impact.
+        </p>
       </motion.div>
 
       <div className="mt-8 flex flex-col items-center 2xl:mt-10">
@@ -102,11 +103,6 @@ export function Hero({
             {t}
           </span>
         ))}
-      </p>
-
-      <p className="mt-2 max-w-md text-center text-xs text-white/60">
-        One coffee with someone from the rooms that make the world.
-        In your inbox {sendsAt.toLowerCase()}.
       </p>
 
       <div className="mt-14 w-full">
