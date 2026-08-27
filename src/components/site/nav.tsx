@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Logo } from "@/components/brand";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -25,11 +26,8 @@ export function SiteNav() {
         scrolled ? "py-3 md:py-4" : "py-5 md:py-7",
       )}
     >
-      <Link
-        href="/"
-        className="font-display text-2xl font-bold tracking-tight text-white"
-      >
-        crashh <span aria-hidden>☕</span>
+      <Link href="/" className="text-white">
+        <Logo />
       </Link>
       <div className="flex items-center gap-2">
         <Link

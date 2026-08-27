@@ -30,10 +30,6 @@ export function BackgroundVideo({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [motionOk, setMotionOk] = useState(false);
-  // Only once the video can actually play does it fade in and lift the
-  // band's backdrop blur. A missing or still-loading file changes nothing:
-  // the blurred still keeps rendering exactly as it does today.
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: no-preference)");
@@ -45,8 +41,6 @@ export function BackgroundVideo({
 
   useEffect(() => {
     if (!motionOk) return;
-    // Muted + playsInline autoplay is allowed everywhere, but some browsers
-    // still want an explicit nudge; a rejection just leaves the poster up.
     videoRef.current?.play().catch(() => {});
   }, [motionOk]);
 
@@ -55,20 +49,18 @@ export function BackgroundVideo({
   return (
     <video
       ref={videoRef}
-      {...(ready ? { "data-bg-video": "" } : {})}
+      data-bg-video=""
       autoPlay
       loop
       muted
       playsInline
-      preload="metadata"
+      preload="auto"
       poster={poster}
       src={src}
       aria-hidden
-      onCanPlay={() => setReady(true)}
       className={cn(
         "pointer-events-none fixed inset-0 z-[-2] h-full w-full select-none object-cover",
-        "brightness-[0.8] saturate-[1.1] transition-opacity duration-700",
-        ready ? "opacity-100" : "opacity-0",
+        "brightness-[0.8] saturate-[1.1]",
         "motion-reduce:hidden",
         className,
       )}

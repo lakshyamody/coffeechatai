@@ -213,7 +213,7 @@
   .paper-grain {
     position: relative;
     isolation: isolate;
-    background-color: #1a2236;
+    background-color: transparent;
   }
   .paper-grain::before {
     content: "";
@@ -227,6 +227,12 @@
     transform: scale(1.08);
     z-index: -2;
     pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  /* Hide the default still behind the site video, but keep the two
+     section photos (Golden Gate / School of Athens) visible. */
+  body:has([data-bg-video]) .paper-grain:not(.skyline-2):not(.skyline-4)::before {
+    opacity: 0;
   }
   .paper-grain::after {
     content: "";
@@ -250,7 +256,7 @@
     and the text keeps its scrim. Reduced-motion users never mount the video,
     so they keep the blurred-still look untouched.
   */
-  .paper-grain:has([data-bg-video])::after {
+  body:has([data-bg-video]) .paper-grain::after {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background:
@@ -261,9 +267,26 @@
 
   /* Variant backdrops for the deeper scroll sections. */
   .skyline-2 { background-color: #132042; }
-  .skyline-2::before { background-image: url("/bg2.jpg"); background-position: center 55%; }
+  .skyline-2::before {
+    opacity: 1;
+    background-image: url("/bg2.jpg");
+    background-position: center 55%;
+  }
   .skyline-4 { background-color: #1a2236; }
-  .skyline-4::before { background-image: url("/bg4.jpg"); background-position: center top; }
+  .skyline-4::before {
+    opacity: 1;
+    background-image: url("/bg4.jpg");
+    background-position: center top;
+  }
+  body:has([data-bg-video]) .skyline-2::after,
+  body:has([data-bg-video]) .skyline-4::after {
+    backdrop-filter: blur(7px) saturate(1.1);
+    -webkit-backdrop-filter: blur(7px) saturate(1.1);
+    background:
+      radial-gradient(120% 80% at 50% 10%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%),
+      radial-gradient(80% 60% at 50% 90%, rgba(10, 15, 30, 0.6) 0%, rgba(10, 15, 30, 0) 70%),
+      linear-gradient(180deg, rgba(43, 58, 85, 0.37) 0%, rgba(26, 34, 54, 0.57) 100%);
+  }
 
   /* Crashh headline feel: tight serif with a hint of grit. */
   .headline {

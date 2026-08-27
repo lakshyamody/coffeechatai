@@ -3,6 +3,7 @@ import { Archivo_Black, Caveat, DM_Sans, Instrument_Serif } from "next/font/goog
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
 import { SetupNeeded } from "@/components/setup-needed";
+import { SiteBackdrop } from "@/components/site/background-video";
 import { storageHealthy } from "@/lib/db";
 import { ROUND_LABELS } from "@/lib/schedule";
 import "./globals.css";
@@ -59,6 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${headline.variable} ${dmSans.variable} ${caveat.variable} ${logoFace.variable} ${cuteCat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background">
+        <SiteBackdrop />
         {ready ? children : <SetupNeeded />}
         <Toaster position="top-center" />
       </body>

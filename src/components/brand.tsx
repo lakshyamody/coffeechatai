@@ -47,43 +47,37 @@ export function Avatar({
   );
 }
 
+/** Same globe mark as the landing headline, for logos and empty states. */
 export function CoffeeCup({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 64 64" className={className} aria-hidden>
-      <g className="origin-center">
-        <path
-          d="M14 26h30v14a13 13 0 0 1-13 13h-4a13 13 0 0 1-13-13V26Z"
-          fill="var(--color-paper)"
-          stroke="var(--color-ink)"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M17 29h24v11a10 10 0 0 1-10 10h-4a10 10 0 0 1-10-10V29Z"
-          fill="var(--color-roast)"
-        />
-        <path
-          d="M44 30h4a7 7 0 0 1 0 14h-4"
-          fill="none"
-          stroke="var(--color-ink)"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M10 55h38"
-          stroke="var(--color-ink)"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-      </g>
-      <g stroke="var(--color-ink)" strokeWidth="2.5" strokeLinecap="round" fill="none">
-        <path d="M23 18c0-4 4-4 4-8" className="animate-steam" />
-        <path
-          d="M31 16c0-4 4-4 4-8"
-          className="animate-steam"
-          style={{ animationDelay: "0.7s" }}
-        />
-      </g>
+    <svg viewBox="0 0 96 96" className={className} aria-hidden>
+      <circle
+        cx="48"
+        cy="48"
+        r="31"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        opacity="0.9"
+      />
+      <ellipse
+        cx="48"
+        cy="48"
+        rx="13"
+        ry="31"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.25"
+        opacity="0.7"
+      />
+      <path
+        d="M17 48h62M22 34h52M22 62h52"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.25"
+        opacity="0.7"
+      />
+      <circle cx="48" cy="48" r="4.5" fill="var(--color-roast)" />
     </svg>
   );
 }

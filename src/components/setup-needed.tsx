@@ -1,5 +1,4 @@
 import { CoffeeCup } from "@/components/brand";
-import { SiteBackdrop } from "@/components/site/background-video";
 
 /**
  * Shown in place of the whole app when storage is unreachable. Crashh stores
@@ -9,7 +8,6 @@ import { SiteBackdrop } from "@/components/site/background-video";
 export function SetupNeeded() {
   return (
     <main className="paper-grain grid min-h-screen place-items-center px-5 py-16">
-      <SiteBackdrop />
       <div className="w-full max-w-xl">
         <CoffeeCup className="h-14 w-14" />
         <h1 className="mt-5 font-display text-5xl leading-none text-ink">
