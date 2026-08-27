@@ -75,19 +75,44 @@ export function FadeUp({
   );
 }
 
-/** The wobbling sun that crowns each big headline. */
+/** A slow-tilting globe that sits above the big headlines. */
 export function SunBurst({ className }: { className?: string }) {
   return (
-    <motion.img
-      src="/sun.png"
-      alt=""
+    <motion.svg
+      viewBox="0 0 96 96"
       aria-hidden
-      width={96}
-      height={96}
-      className={cn("h-14 w-auto select-none md:h-20", className)}
-      animate={{ rotate: [-4, 4, -4] }}
-      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-    />
+      className={cn("h-14 w-14 select-none text-white md:h-20 md:w-20", className)}
+      animate={{ rotate: [-5, 5, -5] }}
+      transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <circle
+        cx="48"
+        cy="48"
+        r="31"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        opacity="0.9"
+      />
+      <ellipse
+        cx="48"
+        cy="48"
+        rx="13"
+        ry="31"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.25"
+        opacity="0.7"
+      />
+      <path
+        d="M17 48h62M22 34h52M22 62h52"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.25"
+        opacity="0.7"
+      />
+      <circle cx="48" cy="48" r="4.5" fill="var(--color-roast)" />
+    </motion.svg>
   );
 }
 

@@ -11,7 +11,7 @@ import { SunBurst } from "@/components/site/fx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MARQUEE_ORGS } from "@/lib/orgs";
-import { ROUND_LABELS, sendsAt } from "@/lib/schedule";
+import { sendsAt } from "@/lib/schedule";
 
 export function Hero({
   members,
@@ -45,9 +45,9 @@ export function Hero({
       >
         <SunBurst />
         <h1 className="headline font-display relative z-10 -mt-2 text-center text-[52px] leading-[1.05] tracking-tight text-white md:text-[76px] 2xl:text-[92px]">
-          <span className="block">one coffee chat</span>
+          <span className="block">meet people</span>
           <span className="block">
-            every <em className="italic">{ROUND_LABELS.sendsDay.toLowerCase()}</em>
+            who&apos;ll <em className="italic">change you</em>
           </span>
         </h1>
       </motion.div>
@@ -104,8 +104,9 @@ export function Hero({
         ))}
       </p>
 
-      <p className="mt-2 text-center text-xs text-white/60">
-        One person, {sendsAt.toLowerCase()}, straight to your inbox.
+      <p className="mt-2 max-w-md text-center text-xs text-white/60">
+        One coffee with someone from the rooms that make the world.
+        In your inbox {sendsAt.toLowerCase()}.
       </p>
 
       <div className="mt-14 w-full">

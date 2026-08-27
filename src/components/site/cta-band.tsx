@@ -9,12 +9,12 @@ export function CtaBand() {
       <FadeUp className="flex flex-col items-center text-center">
         <SunBurst />
         <h2 className="headline font-display text-[44px] leading-[1.05] tracking-tight text-white md:text-[64px]">
-          <span className="block">network without</span>
-          <span className="block italic">the small talk</span>
+          <span className="block">from the world&apos;s best</span>
+          <span className="block italic">over coffee</span>
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-white/75">
-          This round closes {ROUND_LABELS.closesDay}. One paste, one question,
-          one conversation {ROUND_LABELS.sendsDay}.
+          People who will make you greater, from the places that already are.
+          This round closes {ROUND_LABELS.closesDay}.
         </p>
         <Link
           href="/login"

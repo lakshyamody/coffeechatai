@@ -2,10 +2,10 @@ import { cn } from "@/lib/utils";
 
 /** Deterministic avatar palette — same person always gets the same face. */
 const PALETTES: Array<[string, string]> = [
-  ["#C0562B", "#FFCD2A"],
+  ["#C0562B", "#E25B2C"],
   ["#2FAF51", "#E8C9A0"],
   ["#4285F4", "#B9B689"],
-  ["#EF4146", "#FFCD2A"],
+  ["#EF4146", "#F4A574"],
   ["#646446", "#E8C9A0"],
   ["#96421F", "#F0EFDC"],
   ["#1E1D1B", "#C0562B"],

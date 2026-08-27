@@ -43,8 +43,8 @@ const cuteCat = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Crashh | Your coffee chat matchmaker",
-  description: `Crashh matches you with one person worth talking to every week. No cold DMs, no networking events, no swiping. One intro, one conversation, every ${ROUND_LABELS.sendsDay}.`,
+  title: "Crashh | Coffee with people who'll change you",
+  description: `Crashh matches you with people from the rooms that make the world — one coffee chat a week that can change who you become. No cold DMs, no swiping. One intro every ${ROUND_LABELS.sendsDay}.`,
 };
 
 export const dynamic = "force-dynamic";

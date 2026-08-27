@@ -204,7 +204,7 @@ export async function sendEmail(msg: {
 
 const CREAM = "#f0efdc";
 const INK = "#0d0c0b";
-const ROAST = "#c0562b";
+const ROAST = "#e25b2c";
 const OLIVE = "#646446";
 
 function layout(title: string, body: string): string {
@@ -301,11 +301,11 @@ export function matchEmail(opts: {
         `<div style="margin-top:20px">
            ${
              opts.bookingUrl
-               ? `<a href="${opts.bookingUrl}" style="display:inline-block;background:#ffcd2a;color:${INK};border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Book a time with ${opts.matchName.split(" ")[0]}</a> `
+               ? `<a href="${opts.bookingUrl}" style="display:inline-block;background:${ROAST};color:#fff8f2;border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Book a time with ${opts.matchName.split(" ")[0]}</a> `
                : ""
            }<a href="mailto:${opts.matchEmail}?subject=${encodeURIComponent(
              "Coffee chat this week?",
-           )}" style="display:inline-block;background:${opts.bookingUrl ? "#fff" : "#ffcd2a"};color:${INK};border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Email ${opts.matchName.split(" ")[0]}</a>
+           )}" style="display:inline-block;background:${opts.bookingUrl ? "#fff" : ROAST};color:${opts.bookingUrl ? INK : "#fff8f2"};border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Email ${opts.matchName.split(" ")[0]}</a>
            <a href="${opts.dashboardUrl}" style="display:inline-block;margin-left:8px;color:${OLIVE};font-size:14px;text-decoration:underline;padding:11px 0">See the full match</a>
          </div>`,
     ),
@@ -326,7 +326,7 @@ export function feedbackRequestEmail(opts: {
       p(
         `Thirty seconds on your chat with ${opts.matchName} makes your next match better — we tune your matching on what you tell us here.`,
       ) +
-        `<div style="margin-top:18px"><a href="${opts.feedbackUrl}" style="display:inline-block;background:#ffcd2a;color:${INK};border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Rate the chat</a></div>`,
+        `<div style="margin-top:18px"><a href="${opts.feedbackUrl}" style="display:inline-block;background:${ROAST};color:#fff8f2;border:2px solid ${INK};border-radius:10px;padding:11px 20px;font-weight:800;text-decoration:none">Rate the chat</a></div>`,
     ),
     text: `How was your chat with ${opts.matchName}? Rate it: ${opts.feedbackUrl}`,
   };
