@@ -40,5 +40,8 @@ export async function POST(request: Request) {
 
   const response = NextResponse.json({ ok: true, next: "/dashboard" });
   response.cookies.set(SESSION_COOKIE, issueSession(profile.id), SESSION_COOKIE_OPTIONS);
+  // Signing in is as explicit as verifying a code: any half-finished signup
+  // for a different address on this browser is over.
+  response.cookies.set("brewed_pending_email", "", { path: "/", maxAge: 0 });
   return response;
 }

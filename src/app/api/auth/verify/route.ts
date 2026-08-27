@@ -47,6 +47,9 @@ export async function POST(request: Request) {
 
   if (existing) {
     response.cookies.set(SESSION_COOKIE, issueSession(existing.id), SESSION_COOKIE_OPTIONS);
+    // Drop any pending address from an earlier abandoned signup — this code
+    // is a newer proof of who's at the keyboard.
+    response.cookies.set("brewed_pending_email", "", { path: "/", maxAge: 0 });
   } else {
     // No profile to bind a session to yet — carry the proven address into
     // onboarding so they don't retype it and can't change it.
@@ -56,6 +59,11 @@ export async function POST(request: Request) {
       path: "/",
       maxAge: 60 * 60,
     });
+    // Whoever typed this code is the person at the keyboard now. If a member
+    // was still signed in on this browser (a shared laptop, a demo), keeping
+    // that session would hang the newcomer's password, profile and emails on
+    // the old account — so the old session ends here.
+    response.cookies.set(SESSION_COOKIE, "", { path: "/", maxAge: 0 });
   }
   return response;
 }

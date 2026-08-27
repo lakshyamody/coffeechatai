@@ -49,7 +49,9 @@ export async function GET(request: Request) {
   const sessionId = readSession(jar.get(SESSION_COOKIE)?.value);
   const sessionProfile = sessionId ? await getProfile(sessionId) : null;
   const pendingEmail = jar.get("brewed_pending_email")?.value;
-  const verifiedEmail = sessionProfile?.email ?? pendingEmail;
+  // Same precedence as enroll: a code verified minutes ago outranks a
+  // session left behind by whoever used this browser before.
+  const verifiedEmail = pendingEmail ?? sessionProfile?.email;
 
   if (!verifiedEmail) {
     return fail("Confirm your email first, then connect LinkedIn.");
@@ -58,7 +60,10 @@ export async function GET(request: Request) {
   // Connecting an account whose LinkedIn address differs from the verified
   // one is fine — people sign up with a work address and use a personal
   // LinkedIn. The verified address stays authoritative.
-  const existing = sessionProfile ?? (await getProfileByEmail(verifiedEmail));
+  const existing =
+    sessionProfile?.email === verifiedEmail
+      ? sessionProfile
+      : await getProfileByEmail(verifiedEmail);
 
   if (existing) {
     // Returning member: sign them in and record the LinkedIn identity.

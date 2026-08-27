@@ -20,7 +20,9 @@ export default async function JoinPage() {
   const sessionId = readSession(jar.get(SESSION_COOKIE)?.value);
   const sessionEmail = sessionId ? (await getProfile(sessionId))?.email : undefined;
   const pending = jar.get("brewed_pending_email")?.value;
-  const email = sessionEmail ?? pending;
+  // A just-verified address outranks an older session: on a shared browser
+  // the flow belongs to whoever typed the last code.
+  const email = pending ?? sessionEmail;
 
   if (!email) redirect("/login");
 

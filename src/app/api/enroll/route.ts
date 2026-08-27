@@ -48,7 +48,11 @@ export async function POST(request: Request) {
   const sessionId = readSession(jar.get(SESSION_COOKIE)?.value);
   const pendingEmail = jar.get("brewed_pending_email")?.value;
   const sessionProfile = sessionId ? await getProfile(sessionId) : null;
-  const email = sessionProfile?.email ?? (pendingEmail ? normaliseEmail(pendingEmail) : null);
+  // When a just-verified address and an older session disagree, the fresher
+  // proof names the enrollee. The other order let a newcomer on a signed-in
+  // browser overwrite the previous account — and sent their welcome and
+  // match emails to its owner.
+  const email = pendingEmail ? normaliseEmail(pendingEmail) : (sessionProfile?.email ?? null);
 
   if (!email) {
     return NextResponse.json(
@@ -104,7 +108,8 @@ export async function POST(request: Request) {
     email,
   });
 
-  const existing = sessionProfile ?? (await getProfileByEmail(email));
+  const existing =
+    sessionProfile?.email === email ? sessionProfile : await getProfileByEmail(email);
 
   // Password became mandatory before onboarding: either the account already
   // has one, or the just-verified flow parked one for this address.

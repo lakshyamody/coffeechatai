@@ -36,10 +36,14 @@ export async function POST(request: Request) {
   const sessionId = readSession(jar.get(SESSION_COOKIE)?.value);
   const pending = jar.get("brewed_pending_email")?.value;
 
-  const profile = sessionId
-    ? await getProfile(sessionId)
-    : pending
-      ? await getProfileByEmail(normaliseEmail(pending))
+  // A pending cookie is a code verified minutes ago — a fresher proof of
+  // identity than a session that may belong to whoever used this browser
+  // before. When both exist, the verification wins; the old order hung a
+  // newcomer's password on the previous account.
+  const profile = pending
+    ? await getProfileByEmail(normaliseEmail(pending))
+    : sessionId
+      ? await getProfile(sessionId)
       : null;
 
   if (profile) {
