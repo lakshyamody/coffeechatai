@@ -210,7 +210,7 @@ const OLIVE = "#646446";
 function layout(title: string, body: string): string {
   return `<!doctype html><html><body style="margin:0;padding:24px;background:${CREAM};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:${INK}">
   <div style="max-width:520px;margin:0 auto">
-    <div style="font-size:22px;font-weight:800;letter-spacing:-0.4px;margin-bottom:18px">&#9749; brewed</div>
+    <div style="font-size:22px;font-weight:800;letter-spacing:-0.4px;margin-bottom:18px">&#9749; crashh</div>
     <div style="background:#fff;border:2px solid ${INK};border-radius:16px;padding:26px;box-shadow:5px 5px 0 0 ${INK}">
       <h1 style="margin:0 0 14px;font-size:24px;line-height:1.2">${title}</h1>
       ${body}
@@ -227,7 +227,7 @@ const p = (text: string) =>
 
 export function verificationEmail(code: string) {
   return {
-    subject: `${code} is your Brewed code`,
+    subject: `${code} is your Crashh code`,
     html: layout(
       "Confirm your email",
       p("Enter this code to finish signing in. It expires in 10 minutes.") +
@@ -236,7 +236,7 @@ export function verificationEmail(code: string) {
           `<span style="color:${OLIVE};font-size:13px">If you didn't ask for this, you can ignore it — nobody can sign in without the code.</span>`,
         ),
     ),
-    text: `Your Brewed code is ${code}. It expires in 10 minutes.`,
+    text: `Your Crashh code is ${code}. It expires in 10 minutes.`,
   };
 }
 

@@ -29,7 +29,7 @@ export function SiteNav() {
         href="/"
         className="font-display text-2xl font-bold tracking-tight text-white"
       >
-        brewed <span aria-hidden>☕</span>
+        crashh <span aria-hidden>☕</span>
       </Link>
       <div className="flex items-center gap-2">
         <Link

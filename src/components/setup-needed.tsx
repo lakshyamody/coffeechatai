@@ -1,7 +1,7 @@
 import { CoffeeCup } from "@/components/brand";
 
 /**
- * Shown in place of the whole app when storage is unreachable. Brewed stores
+ * Shown in place of the whole app when storage is unreachable. Crashh stores
  * real accounts, so running without a database would mean silently losing
  * people's signups — better to stop and say what's missing.
  */
@@ -14,7 +14,7 @@ export function SetupNeeded() {
           Almost there — this needs a database
         </h1>
         <p className="mt-4 text-base leading-relaxed text-bark">
-          Brewed stores real accounts and real matches, so it needs somewhere
+          Crashh stores real accounts and real matches, so it needs somewhere
           durable to put them. Locally that&apos;s a SQLite file; this host has a
           read-only filesystem, so it needs Postgres.
         </p>

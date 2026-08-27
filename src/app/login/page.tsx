@@ -1,7 +1,7 @@
 import { LoginFlow } from "@/components/app/login-flow";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Sign in | Brewed" };
+export const metadata = { title: "Sign in | Crashh" };
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const params = await searchParams;

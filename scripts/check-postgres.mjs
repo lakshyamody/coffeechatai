@@ -15,9 +15,9 @@ import { readFileSync } from "node:fs";
 // Pull the DDL straight out of db.ts so the two can't drift apart.
 const source = readFileSync(new URL("../src/lib/db.ts", import.meta.url), "utf8");
 const block = source.slice(source.indexOf("const SCHEMA = ["), source.indexOf("];", source.indexOf("const SCHEMA = [")));
-// The DDL is written with a ${T} qualifier that resolves to "brewed." on
+// The DDL is written with a ${T} qualifier that resolves to "crashh." on
 // Postgres, so substitute the production value and test the real shape.
-const SCHEMA = [...block.matchAll(/`([^`]+)`/g)].map((m) => m[1].replaceAll("${T}", "brewed."));
+const SCHEMA = [...block.matchAll(/`([^`]+)`/g)].map((m) => m[1].replaceAll("${T}", "crashh."));
 if (SCHEMA.length === 0) throw new Error("Could not read SCHEMA out of src/lib/db.ts");
 
 const toPg = (sql) => { let n = 0; return sql.replace(/\?/g, () => `$${++n}`); };

@@ -92,7 +92,7 @@ export function Logo({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
       <CoffeeCup className="h-7 w-7" />
-      <span className="font-display text-2xl tracking-wide text-ink">brewed</span>
+      <span className="font-display text-2xl tracking-wide text-ink">crashh</span>
     </span>
   );
 }

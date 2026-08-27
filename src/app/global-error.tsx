@@ -32,7 +32,7 @@ export default function GlobalError({
         }}
       >
         <div style={{ maxWidth: 560 }}>
-          <div style={{ fontSize: 26, fontWeight: 800, marginBottom: 18 }}>☕ brewed</div>
+          <div style={{ fontSize: 26, fontWeight: 800, marginBottom: 18 }}>☕ crashh</div>
           <div
             style={{
               background: "#fff",
@@ -48,7 +48,7 @@ export default function GlobalError({
                   This deployment has no database
                 </h1>
                 <p style={{ margin: "0 0 12px", fontSize: 15, lineHeight: 1.6 }}>
-                  Brewed stores real accounts, so it needs somewhere durable to put
+                  Crashh stores real accounts, so it needs somewhere durable to put
                   them. Locally it uses a SQLite file, but this host&apos;s
                   filesystem is read-only, so it needs Postgres.
                 </p>

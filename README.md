@@ -1,4 +1,4 @@
-# Brewed ☕
+# Crashh ☕
 
 A coffee-chat matchmaker — the ditto.ai product model and visual language, rebuilt for
 professional networking instead of dating. Tell it who you'd like to meet; every
@@ -208,7 +208,7 @@ Four things cost real time and are worth knowing up front:
 - **Percent-encode the password.** Supabase's template is
   `postgresql://postgres:[YOUR-PASSWORD]@…`; a password containing `@` or `#`
   breaks URL parsing unless encoded, and the `[ ]` from the template must go.
-- **The app owns a `brewed` schema.** A Supabase project is rarely empty and
+- **The app owns a `crashh` schema.** A Supabase project is rarely empty and
   `profiles` is a name their own templates use, so nothing here lives in
   `public`.
 - **Size the pool for concurrent renders.** React renders the layout and page

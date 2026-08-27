@@ -12,7 +12,7 @@ import { explain, starters } from "@/lib/scoring";
 import type { Profile } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Your match | Brewed" };
+export const metadata = { title: "Your match | Crashh" };
 
 const toReveal = (p: Profile): RevealPerson => ({
   id: p.id,

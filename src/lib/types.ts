@@ -1,5 +1,5 @@
 /**
- * Domain model for Brewed.
+ * Domain model for Crashh.
  *
  * A member pastes their LinkedIn and answers one question once. Every round
  * (weekly) the matcher takes everyone opted in and produces 1:1 pairings.

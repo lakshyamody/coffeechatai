@@ -7,7 +7,7 @@ import { adminTokenConfigured, isOperator, redactCodes } from "@/lib/admin";
 import { OperatorLocked } from "@/components/app/operator-locked";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Outbox | Brewed" };
+export const metadata = { title: "Outbox | Crashh" };
 
 /**
  * Every message the app has produced this run.

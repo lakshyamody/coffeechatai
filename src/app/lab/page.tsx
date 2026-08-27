@@ -8,7 +8,7 @@ import { adminTokenConfigured, isOperator } from "@/lib/admin";
 import { OperatorLocked } from "@/components/app/operator-locked";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Matching lab | Brewed" };
+export const metadata = { title: "Matching lab | Crashh" };
 
 const STRATEGY_COPY: Record<string, { title: string; body: string }> = {
   "stable-roommates": {

@@ -9,7 +9,7 @@ import { getProfile } from "@/lib/store";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Join a round | Brewed",
+  title: "Join a round | Crashh",
 };
 
 export default async function JoinPage() {

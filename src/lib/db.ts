@@ -33,6 +33,12 @@ export const dialect: Dialect = CONNECTION ? "postgres" : "sqlite";
  * app can never collide with, or be confused by, whatever else lives there.
  * SQLite has no schemas, so locally the names stay bare.
  */
+/*
+ * The Postgres schema keeps its original name ("brewed") from before the
+ * product was renamed to Crashh: renaming a live schema is a migration with
+ * user-visible risk and zero user-visible benefit. The brand lives in copy;
+ * the schema is just an address.
+ */
 export const T = dialect === "postgres" ? "brewed." : "";
 
 interface Handle {

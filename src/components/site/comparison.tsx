@@ -17,7 +17,7 @@ export function Comparison() {
       <FadeUp className="relative flex w-full max-w-5xl flex-col items-center">
         <h2 className="headline font-display text-center text-[36px] leading-[1.05] tracking-tight text-white md:text-[52px]">
           <span className="block">tired of cold DMs?</span>
-          <span className="block italic">brewed is for you</span>
+          <span className="block italic">crashh is for you</span>
         </h2>
 
         <div className="mt-12 grid w-full items-start gap-8 md:grid-cols-2">

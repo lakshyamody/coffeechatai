@@ -7,7 +7,7 @@ import { ScrollDeck, TypewriterLines } from "@/components/site/fx";
 import { MatchCardPreview, TagCloudPreview } from "@/components/site/step-art";
 import { PhoneMock } from "@/components/site/phone";
 
-const HEADLINE_LINES = ["brewed into your", "next conversation"];
+const HEADLINE_LINES = ["crashh into your", "next conversation"];
 const FACT_LINES = ["one intro a week,", "zero cold DMs"];
 
 /**

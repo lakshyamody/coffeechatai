@@ -170,7 +170,7 @@ export function MatchReveal({
               href={`mailto:${them.email}?subject=${encodeURIComponent(
                 "Coffee chat this week?",
               )}&body=${encodeURIComponent(
-                `Hi ${them.name.split(" ")[0]} — Brewed matched us this week.\n\n`,
+                `Hi ${them.name.split(" ")[0]} — Crashh matched us this week.\n\n`,
               )}`}
             >
               <Mail className="mr-1.5 h-4 w-4" />

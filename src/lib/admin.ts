@@ -35,7 +35,7 @@ export async function isOperator(searchToken?: string): Promise<boolean> {
 /** Codes are single-use and short-lived, but they should never be rendered. */
 export function redactCodes(text: string): string {
   return text
-    .replace(/\b\d{6}\b(?=\s+is your Brewed code)/g, "••••••")
+    .replace(/\b\d{6}\b(?=\s+is your \w+ code)/g, "••••••")
     .replace(/(letter-spacing:10px[^>]*>)\s*\d{6}\s*(<)/g, "$1••••••$2")
-    .replace(/Your Brewed code is \d{6}/g, "Your Brewed code is ••••••");
+    .replace(/Your \w+ code is \d{6}/g, "Your code is ••••••");
 }

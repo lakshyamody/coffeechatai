@@ -7,7 +7,7 @@ interface Bubble {
 }
 
 export function PhoneMock({
-  title = "Brewed",
+  title = "Crashh",
   bubbles,
   className,
 }: {

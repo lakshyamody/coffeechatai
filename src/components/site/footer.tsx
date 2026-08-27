@@ -25,7 +25,7 @@ export function SiteFooter() {
 
           <div className="mt-4">
             <span className="font-display text-[40px] font-bold leading-none tracking-tight text-white md:text-[48px]">
-              brewed
+              crashh
             </span>
           </div>
         </div>
@@ -46,7 +46,7 @@ export function SiteFooter() {
 
           <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2 text-[13px] text-white md:mt-auto md:pt-10">
             <span className="text-white/70">
-              © Brewed {new Date().getFullYear()}
+              © Crashh {new Date().getFullYear()}
             </span>
             <span className="font-script text-lg text-roast">
               go talk to someone ☕
