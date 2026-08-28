@@ -164,22 +164,22 @@ export interface MarqueeOrg {
 
 const MARQUEE_LOGOS: Record<string, string> = {
   "Y Combinator": "/org-logos/ycombinator.svg",
-  Stanford: "/org-logos/stanford.png",
+  Stanford: "/org-logos/stanford.svg",
   NUS: "/org-logos/nus.png",
   "IIT Bombay": "/org-logos/iit-bombay.png",
-  Harvard: "/org-logos/harvard.png",
+  Harvard: "/org-logos/harvard.svg",
   Stripe: "/org-logos/stripe.svg",
   "IISc Bangalore": "/org-logos/iisc.svg",
-  MIT: "/org-logos/mit.png",
+  MIT: "/org-logos/mit.svg",
   Grab: "/org-logos/grab.svg",
   Cornell: "/org-logos/cornell.png",
   "NTU Singapore": "/org-logos/ntu.png",
   Anthropic: "/org-logos/anthropic.svg",
   "IIT Delhi": "/org-logos/iit-delhi.png",
   Figma: "/org-logos/figma.svg",
-  "UC Berkeley": "/org-logos/berkeley.png",
+  "UC Berkeley": "/org-logos/berkeley.svg",
   "BITS Pilani": "/org-logos/bits-pilani.png",
-  Princeton: "/org-logos/princeton.png",
+  Princeton: "/org-logos/princeton.svg",
   Razorpay: "/org-logos/razorpay.svg",
   "IIIT Hyderabad": "/org-logos/iiit-hyderabad.png",
   Waterloo: "/org-logos/waterloo.png",
@@ -187,8 +187,8 @@ const MARQUEE_LOGOS: Record<string, string> = {
   "IIT Madras": "/org-logos/iit-madras.png",
   Columbia: "/org-logos/columbia.png",
   Ramp: "/org-logos/ramp.svg",
-  UPenn: "/org-logos/upenn.png",
-  "Georgia Tech": "/org-logos/gatech.png",
+  UPenn: "/org-logos/upenn.svg",
+  "Georgia Tech": "/org-logos/gatech.svg",
 };
 
 export const MARQUEE_ORGS: MarqueeOrg[] = MARQUEE_NAMES.map((name) => ({
