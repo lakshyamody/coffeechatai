@@ -62,11 +62,12 @@ export function LoginFlow({
     try {
       const { res, data } = await post("/api/auth/request", { email });
       if (!res.ok) {
+        // "restricted" means the provider refused this recipient (new-account
+        // caps, unverified domain): nothing was sent, so the code screen
+        // would have them waiting for mail that never left. Stay put.
         if (data.restricted) setMailBlocked(data.error);
-        else {
-          toast.error(data.error ?? "Couldn't send a code.");
-          return false;
-        }
+        else toast.error(data.error ?? "Couldn't send a code.");
+        return false;
       }
       setDevCode(data.devCode ?? null);
       setDelivery(data.delivery ?? null);
@@ -176,6 +177,15 @@ export function LoginFlow({
         <Logo />
       </Link>
 
+      {mailBlocked && (
+        <div className="sticker mt-6 rounded-xl bg-berry/10 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-berry">
+            That email couldn&apos;t be delivered
+          </p>
+          <p className="mt-1 text-sm leading-relaxed text-bark">{mailBlocked}</p>
+        </div>
+      )}
+
       {stage === "email" && (
         <form onSubmit={submitEmail} className="mt-10">
           <CoffeeCup className="h-14 w-14" />
@@ -258,7 +268,11 @@ export function LoginFlow({
 
           <button
             type="button"
-            onClick={() => setStage("email")}
+            onClick={() => {
+              setStage("email");
+              setPassword("");
+              setMailBlocked(null);
+            }}
             className="mt-2 w-full text-sm font-semibold text-olive hover:text-roast"
           >
             Use a different email
@@ -279,15 +293,6 @@ export function LoginFlow({
             We sent a six-digit code to <strong className="text-ink">{email}</strong>.
           </p>
 
-          {mailBlocked && (
-            <div className="sticker mt-5 rounded-xl bg-berry/10 p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-berry">
-                That email couldn&apos;t be delivered
-              </p>
-              <p className="mt-1 text-sm leading-relaxed text-bark">{mailBlocked}</p>
-            </div>
-          )}
-
           {devCode && (
             <div className="sticker mt-5 rounded-xl bg-primary/25 p-4">
               <p className="text-xs font-bold uppercase tracking-wider text-olive">
@@ -301,7 +306,7 @@ export function LoginFlow({
               </p>
             </div>
           )}
-          {delivery && delivery !== "outbox" && !mailBlocked && (
+          {delivery && delivery !== "outbox" && (
             <p className="mt-3 text-xs text-olive">
               Sent via {delivery}. Nothing there? Check spam.
             </p>
@@ -338,6 +343,8 @@ export function LoginFlow({
             onClick={() => {
               setStage("email");
               setCode("");
+              setDevCode(null);
+              setDelivery(null);
               setMailBlocked(null);
             }}
             className="mt-4 w-full text-sm font-semibold text-olive hover:text-roast"
