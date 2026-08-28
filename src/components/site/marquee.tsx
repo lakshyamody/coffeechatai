@@ -45,7 +45,7 @@ export function Marquee({
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
-                className="h-[18px] w-[18px] rounded-[4px] bg-white object-contain p-[1px]"
+                className="h-[18px] w-auto max-w-[32px] rounded-[4px] bg-white object-contain p-[1px]"
               />
             )}
             {org.name}
