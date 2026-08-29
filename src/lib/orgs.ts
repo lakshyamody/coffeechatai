@@ -80,6 +80,8 @@ export const YC_BATCHES = ["W26", "S25", "W25", "S24", "W24", "S23"] as const;
 
 export const ACCELERATORS: Org[] = [
   { name: "Y Combinator", city: "San Francisco", kind: "accelerator", marquee: true, domain: "ycombinator.com" },
+  { name: "a16z", city: "San Francisco", kind: "accelerator", marquee: true, domain: "a16z.com" },
+  { name: "Afore Capital", city: "San Francisco", kind: "accelerator", marquee: true, domain: "afore.vc" },
   { name: "Antler", city: "Singapore", kind: "accelerator", domain: "antler.co" },
   { name: "South Park Commons", city: "San Francisco", kind: "accelerator", domain: "southparkcommons.com" },
   { name: "Entrepreneur First", city: "Bangalore", kind: "accelerator", domain: "joinef.com" },
@@ -128,6 +130,7 @@ export const orgByName = (name: string) =>
 /** Landing-page marquee — a spread across geographies, not just SF. */
 const MARQUEE_NAMES = [
   "Y Combinator",
+  "a16z",
   "Stanford",
   "NUS",
   "IIT Bombay",
@@ -151,6 +154,7 @@ const MARQUEE_NAMES = [
   "IIT Madras",
   "Columbia",
   "Ramp",
+  "Afore Capital",
   "UPenn",
   "Georgia Tech",
 ];
@@ -164,6 +168,7 @@ export interface MarqueeOrg {
 
 const MARQUEE_LOGOS: Record<string, string> = {
   "Y Combinator": "/org-logos/ycombinator.svg",
+  a16z: "/org-logos/a16z.png",
   Stanford: "/org-logos/stanford.svg",
   NUS: "/org-logos/nus.svg",
   "IIT Bombay": "/org-logos/iit-bombay.png",
@@ -187,6 +192,7 @@ const MARQUEE_LOGOS: Record<string, string> = {
   "IIT Madras": "/org-logos/iit-madras.svg",
   Columbia: "/org-logos/columbia.png",
   Ramp: "/org-logos/ramp.svg",
+  "Afore Capital": "/org-logos/afore.png",
   UPenn: "/org-logos/upenn.png",
   "Georgia Tech": "/org-logos/gatech.svg",
 };
